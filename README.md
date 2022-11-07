@@ -1,4 +1,5 @@
 Hi there and welcome to our team project - 1 team JD 6.0 SkyPro
+
 Featured technologies: Java 11, Maven, Spring
 
 This is a telegram bot for automatisation user experiense of animal shelter🐶🐶🐶
