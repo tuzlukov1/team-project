@@ -9,5 +9,4 @@ class TeamProjectApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
 }
