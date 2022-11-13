@@ -12,10 +12,11 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import pro.sky.teamproject.configuration.TelegramBotConfiguration;
+import pro.sky.teamproject.entity.User;
+import pro.sky.teamproject.services.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 @Service
 public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
@@ -38,13 +39,14 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
 
     static final String CALL_VOLUNTEER_BUTTON = "callVolunteerButton";
 
+    private final TelegramBotConfiguration configuration;
+    private final UserService userService;
 
-    final TelegramBotConfiguration configuration;
+    private final Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
 
-    private Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
-
-    public TelegramBotUpdatesListener(TelegramBotConfiguration configuration) {
+    public TelegramBotUpdatesListener(TelegramBotConfiguration configuration, UserService userService) {
         this.configuration = configuration;
+        this.userService = userService;
     }
 
     @Override
@@ -63,10 +65,19 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
         if (update.hasMessage() && update.getMessage().hasText()) {
             String messageText = update.getMessage().getText();
             long chatId = update.getMessage().getChatId();
+            String userName = update.getMessage().getChat().getUserName();
+            User user = new User();
 
             switch (messageText) {
                 case "/start":
-                    sendGreetings(chatId, update.getMessage().getChat().getFirstName());
+                    if (userService.findUserByChatId(chatId).isEmpty()) {
+                        sendGreetings(chatId, update.getMessage().getChat().getFirstName());
+
+                        user.setName(userName);
+                        user.setChatId(chatId);
+                        userService.createUser(user);
+                    }
+
                     sendMessageToUser(chatId, BOT_INFORMATION);
                     mainMenuKeyboard(chatId);
                     break;
