@@ -13,7 +13,7 @@ import pro.sky.teamproject.listener.TelegramBotUpdatesListener;
 
 @Component
 public class initializer {
-    private Logger logger = LoggerFactory.getLogger(initializer.class);
+    private final Logger logger = LoggerFactory.getLogger(initializer.class);
 
     final TelegramBotUpdatesListener telegramBotUpdatesListener;
 
