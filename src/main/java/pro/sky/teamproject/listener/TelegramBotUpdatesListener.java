@@ -79,47 +79,74 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
     private void checkCallBackQuery(Update update) {
         String callBackData = update.getCallbackQuery().getData();
         if (callBackData.equals(ConstantMessageEnum.INFORMATION_BUTTON.getMessage())) {
+            logger.info("пользоватеь нажал на кнопку информации о приюте");
             informationMenuKeyboard(update);
         }
         if (callBackData.equals(ConstantMessageEnum.HOW_TAKE_PET_BUTTON.getMessage())) {
+            logger.info("пользоватеь нажал на кнопку как взять собаку из приюта");
             String textMessage = "Вывод меню 2-го. этапа - в разработке";
             sendEditMessageToUser(update, textMessage);
             //Здесь будет метод для обработки команды
         }
         if (callBackData.equals(ConstantMessageEnum.SEND_REPORT_BUTTON.getMessage())) {
+            logger.info("пользоватеь нажал на кнопку прислать отчет о питомце");
             String textMessage = "Вывод меню 3-го. этапа - в разработке";
             sendEditMessageToUser(update, textMessage);
             //Здесь будет метод для обработки команды
         }
         if (callBackData.equals(ConstantMessageEnum.CALL_VOLUNTEER_BUTTON.getMessage())) {
+            logger.info("пользоватеь нажал на кнопку связи с волонтером");
             String textMessage = "В ближайшее время с вами свяжеться волонтер";
             sendEditMessageToUser(update, textMessage);
         }
         if (callBackData.equals(ConstantMessageEnum.ABOUT_THE_SHELTER.getMessage())) {
-            String textMessage = "Здесь будет выводиться информация о приюте";
-            sendEditMessageToUser(update, textMessage);
-            //Здесь будет метод для обработки команды
+            logger.info("пользоватеь нажал на кнопку узнать о приюте");
+            sendShelterInformation(update);
         }
         if (callBackData.equals(ConstantMessageEnum.LOCATION.getMessage())) {
-            String textMessage = "Здесь будет выведен адрес, режим работы и схема проезда";
-            sendEditMessageToUser(update, textMessage);
-            //Здесь будет метод для обработки команды
+            logger.info("пользоватеь нажал на кнопку узнать об адресе и режиме работы");
+            sendShelterOpeningHoursAndAddress(update);
         }
         if (callBackData.equals(ConstantMessageEnum.SAFETY_AT_THE_SHELTER.getMessage())) {
-            String textMessage = "Здесь будет выведены правила безопасности в приюте";
-            sendEditMessageToUser(update, textMessage);
-            //Здесь будет метод для обработки команды
+            logger.info("пользоватеь нажал на кнопку узнать о правилах безопасности");
+            sendShelterSafetyRegulations(update);
         }
         if (callBackData.equals(ConstantMessageEnum.REGISTRATION.getMessage())) {
+            logger.info("пользоватеь нажал на кнопку регистрации");
             String textMessage = "Будет выведен опросник для контактных данных";
             sendEditMessageToUser(update, textMessage);
             //Здесь будет метод для обработки команды
         }
         if (callBackData.equals(ConstantMessageEnum.BACK_TO_MAIN_MENU.getMessage())) {
+            logger.info("пользоватеь нажал на кнопку назад");
             mainMenuKeyboard(update);
         }
     }
 
+    /**
+     * Вывод информации о приюте
+     */
+    private void sendShelterInformation(Update update) {
+        String informationMessage = ConstantMessageEnum.SHELTER_INFORMATION.getMessage();
+        infoWithBackButtonToInformationMenu(update, informationMessage);
+    }
+
+    /**
+     * Вывод информации о времени работы и адресе
+     */
+    private void sendShelterOpeningHoursAndAddress(Update update) {
+        String openingHoursMessage = ConstantMessageEnum.SHELTER_OPENING_HOURS.getMessage();
+        String addressMessage = ConstantMessageEnum.SHELTER_ADDRESS.getMessage();
+        infoWithBackButtonToInformationMenu(update, openingHoursMessage + addressMessage);
+    }
+
+    /**
+     * Вывод информации о правилах безопасности
+     */
+    private void sendShelterSafetyRegulations(Update update) {
+        String safetyRegulationsMessage = ConstantMessageEnum.SHELTER_SAFETY_REGULATIONS.getMessage();
+        infoWithBackButtonToInformationMenu(update, safetyRegulationsMessage);
+    }
     /**
      * Вывод приветственного сообщения по команде /start
      */
@@ -296,6 +323,34 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
         informationMenuRows.add(rowForth);
         informationMenuRows.add(rowFifth);
         informationMenuRows.add(rowSixth);
+
+        informationMenuKeyboard.setKeyboard(informationMenuRows);
+
+        message.setReplyMarkup(informationMenuKeyboard);
+        executeEditMessage(message);
+    }
+
+    /**
+     * Вывод кнопки назад в меню "Информация о приюте"
+     */
+    private void infoWithBackButtonToInformationMenu(Update update, String text) {
+        long messageId = update.getCallbackQuery().getMessage().getMessageId();
+        long chatId = update.getCallbackQuery().getMessage().getChatId();
+        EditMessageText message = new EditMessageText();
+        message.setChatId(String.valueOf(chatId));
+        message.setText(text);
+        message.setMessageId((int) messageId);
+
+        InlineKeyboardMarkup informationMenuKeyboard = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> informationMenuRows = new ArrayList<>();
+        List<InlineKeyboardButton> rowOne = new ArrayList<>();
+
+        var backToInformationMenu = new InlineKeyboardButton();
+        backToInformationMenu.setText("Назад");
+        backToInformationMenu.setCallbackData(ConstantMessageEnum.INFORMATION_BUTTON.getMessage());
+        rowOne.add(backToInformationMenu);
+
+        informationMenuRows.add(rowOne);
 
         informationMenuKeyboard.setKeyboard(informationMenuRows);
 
