@@ -1,11 +1,13 @@
 -- liquibase formatted sql
 
--- changeset tuzlukov:6
+-- changeset tuzlukov:13
 CREATE TABLE users
 (
     id          SERIAL PRIMARY KEY,
-    name        TEXT,
+    user_name text,
     chat_id     BIGINT,
+    full_name TEXT,
+    phone     BIGINT,
     have_animal BOOLEAN
 );
 
@@ -37,4 +39,4 @@ CREATE TABLE ownership
     id        SERIAL PRIMARY KEY,
     owner_id  SERIAL REFERENCES users (id),
     animal_id SERIAL REFERENCES animals (id)
-)
+);
