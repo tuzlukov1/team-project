@@ -2,7 +2,6 @@ package pro.sky.teamproject.configuration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -12,12 +11,12 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import pro.sky.teamproject.listener.TelegramBotUpdatesListener;
 
 @Component
-public class initializer {
-    private final Logger logger = LoggerFactory.getLogger(initializer.class);
+public class Initializer {
+    private final Logger logger = LoggerFactory.getLogger(Initializer.class);
 
     final TelegramBotUpdatesListener telegramBotUpdatesListener;
 
-    public initializer(TelegramBotUpdatesListener telegramBotUpdatesListener) {
+    public Initializer(TelegramBotUpdatesListener telegramBotUpdatesListener) {
         this.telegramBotUpdatesListener = telegramBotUpdatesListener;
     }
 

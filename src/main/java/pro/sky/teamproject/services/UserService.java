@@ -19,7 +19,7 @@ public class UserService {
         return Optional.ofNullable(usersRepository.findUserByChatId(id));
     }
 
-    public void createUser(User user) {
+    public void updateUser(User user) {
         usersRepository.save(user);
     }
 }
