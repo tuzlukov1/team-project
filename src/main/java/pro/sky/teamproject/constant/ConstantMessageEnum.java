@@ -48,6 +48,20 @@ public enum ConstantMessageEnum {
 
     REMEMBER_NAME_BUTTON("rememberNameButton"),
     REMEMBER_PHONE_BUTTON("rememberPhoneButton"),
+    PUPPY_DATING_RULES_BUTTON("puppyDatingRulesButton"),
+    DOCUMENTS_FOR_DOGS_BUTTON("documentsForDogsButton"),
+    TRANSPORTATION_ADVICE_BUTTON("transportationAdviceButton"),
+    HOME_IMPROVEMENT_FOR_PUPPY_BUTTON("homeImprovementForPuppyButton"),
+    HOME_IMPROVEMENT_FOR_AN_ADULT_DOG_BUTTON("homeImprovementForAnAdultDogButton"),
+    HOME_IMPROVEMENT_FOR_DOG_WITH_DISABILITY_BUTTON("homeImprovementForDogWithDisability"),
+    CYNOLOGISTS_ADVICE_ON_INITIAL_COMMUNICATION_BUTTON("cynologistsAdviceOnInitialCommunicationButton"),
+    RECOMMENDATIONS_FOR_PROVEN_CYNOLOGISTS_BUTTON("recommendationsForProvenCynologistsButton"),
+    REASON_FOR_REFUSAL_BUTTON("reasonsForRefusalButton"),
+    CANDIDATE_REGISTRATION_BUTTON("candidateRegistrationButton")
+
+
+
+
     ;
 
     private final String message;
