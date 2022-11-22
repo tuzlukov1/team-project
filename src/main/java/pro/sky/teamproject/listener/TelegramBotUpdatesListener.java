@@ -11,6 +11,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import pro.sky.teamproject.configuration.TelegramBotConfiguration;
+import pro.sky.teamproject.constant.CallBackDataEnum;
 import pro.sky.teamproject.constant.ConstantMessageEnum;
 import pro.sky.teamproject.entity.User;
 import pro.sky.teamproject.services.UserService;
@@ -24,6 +25,7 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
 
     private final TelegramBotConfiguration configuration;
     private final UserService userService;
+    Boolean startRegistration = false;
 
     private final Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
 
@@ -61,14 +63,14 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
                 }
                 sendMessageToUser(chatId, ConstantMessageEnum.BOT_INFORMATION.getMessage());
                 mainMenuKeyboard(update);
-            } else if (messageText.matches("[А-Я][а-я]+\\s[А-Я][а-я]+")) {
+            } else if (messageText.matches("[А-Я][а-я]+\\s[А-Я][а-я]+") && startRegistration) {
                 logger.info("пользователь ввел свое имя");
                 user = userService.findUserByChatId(chatId).get();
                 user.setFullName(messageText);
                 userService.updateUser(user);
                 String textMessage = "Введите свой номер телефона, только цифры, например '79000000000'";
                 sendMessageToUser(chatId, textMessage);
-            } else if (messageText.matches("^\\d{5,15}$")) {
+            } else if (messageText.matches("^\\d{5,15}$") && startRegistration) {
                 logger.info("пользователь ввел номер телефона");
                 Optional<User> userByChatId = userService.findUserByChatId(chatId);
                 if (userByChatId.isPresent()) {
@@ -76,8 +78,8 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
                     user.setPhone(Long.valueOf(messageText));
                     userService.updateUser(user);
                     String textMessage = "Регистрация успешна!";
+                    startRegistration = false;
                     sendMessageToUser(chatId, textMessage);
-
                     mainMenuKeyboard(update);
                 }
             } else {
@@ -93,100 +95,94 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
      */
     private void checkCallBackQuery(Update update) {
         String callBackData = update.getCallbackQuery().getData();
-        if (callBackData.equals(ConstantMessageEnum.INFORMATION_BUTTON.getMessage())) {
+        if (callBackData.equals(CallBackDataEnum.INFORMATION_BUTTON.getMessage())) {
             logger.info("пользователь нажал на кнопку информации о приюте");
             informationMenuKeyboard(update);
         }
 
-        if (callBackData.equals(ConstantMessageEnum.HOW_TAKE_PET_BUTTON.getMessage())) {
+        if (callBackData.equals(CallBackDataEnum.HOW_TAKE_PET_BUTTON.getMessage())) {
             logger.info("пользователь нажал на кнопку как взять собаку из приюта");
             takeTheDogMenuKeyboard(update);
         }
 
-        if (callBackData.equals(ConstantMessageEnum.SEND_REPORT_BUTTON.getMessage())) {
+        if (callBackData.equals(CallBackDataEnum.SEND_REPORT_BUTTON.getMessage())) {
             logger.info("пользователь нажал на кнопку прислать отчет о питомце");
             String textMessage = "Вывод меню 3-го. этапа - в разработке";
             sendEditMessageToUser(update, textMessage);
             //Здесь будет метод для обработки команды
         }
 
-        if (callBackData.equals(ConstantMessageEnum.CALL_VOLUNTEER_BUTTON.getMessage())) {
+        if (callBackData.equals(CallBackDataEnum.CALL_VOLUNTEER_BUTTON.getMessage())) {
             logger.info("пользователь нажал на кнопку связи с волонтером");
             String textMessage = "В ближайшее время с вами свяжется волонтер";
             sendEditMessageToUser(update, textMessage);
         }
 
-        if (callBackData.equals(ConstantMessageEnum.ABOUT_THE_SHELTER.getMessage())) {
+        if (callBackData.equals(CallBackDataEnum.ABOUT_THE_SHELTER.getMessage())) {
             logger.info("пользователь нажал на кнопку узнать о приюте");
             sendShelterInformation(update);
         }
 
-        if (callBackData.equals(ConstantMessageEnum.LOCATION.getMessage())) {
+        if (callBackData.equals(CallBackDataEnum.LOCATION.getMessage())) {
             logger.info("пользователь нажал на кнопку узнать об адресе и режиме работы");
             sendShelterOpeningHoursAndAddress(update);
         }
 
-        if (callBackData.equals(ConstantMessageEnum.SAFETY_AT_THE_SHELTER.getMessage())) {
+        if (callBackData.equals(CallBackDataEnum.SAFETY_AT_THE_SHELTER.getMessage())) {
             logger.info("пользователь нажал на кнопку узнать о правилах безопасности");
             sendShelterSafetyRegulations(update);
         }
 
-        if (callBackData.equals(ConstantMessageEnum.REGISTRATION_VOLUNTEER.getMessage())) {
-            logger.info("пользователь нажал на кнопку регистрации для волонтера");
-            String textMessage = "Введите свое имя, например 'Иванов Иван'";
-            sendEditMessageToUser(update, textMessage);
-        }
-
-        if (callBackData.equals(ConstantMessageEnum.BACK_TO_MAIN_MENU.getMessage())) {
+        if (callBackData.equals(CallBackDataEnum.BACK_TO_MAIN_MENU.getMessage())) {
             logger.info("пользователь нажал на кнопку назад");
             mainMenuKeyboard(update);
         }
 
-        if (callBackData.equals(ConstantMessageEnum.PUPPY_DATING_RULES_BUTTON.getMessage())) {
-            logger.info("пользователь нажад на кнопку правила знакомства с собакой");
-            //Здесь будет метод для обработки команды
+        if (callBackData.equals(CallBackDataEnum.DOG_ACQUAINTANCE_RULES_BUTTON.getMessage())) {
+            logger.info("пользователь нажал на кнопку правила знакомства с собакой");
+            sendDogAcquaintanceRules(update);
         }
 
-        if (callBackData.equals(ConstantMessageEnum.DOCUMENTS_FOR_DOGS_BUTTON.getMessage())) {
-            logger.info("список документов, необходимых для того, чтобы взять собаку из приюта");
-            //Здесь будет метод для обработки команды
+        if (callBackData.equals(CallBackDataEnum.DOCUMENTS_FOR_DOGS_BUTTON.getMessage())) {
+            logger.info("пользователь нажал на кнопку список документов, необходимых для того, чтобы взять собаку из приюта");
+            sendDocumentsForDogs(update);
         }
 
-        if (callBackData.equals(ConstantMessageEnum.TRANSPORTATION_ADVICE_BUTTON.getMessage())) {
-            logger.info("список рекомендаций по транспортировке животного");
-            //Здесь будет метод для обработки команды
+        if (callBackData.equals(CallBackDataEnum.TRANSPORTATION_ADVICE_BUTTON.getMessage())) {
+            logger.info("пользователь нажал на кнопку список рекомендаций по транспортировке животного");
+            sendTransportationAdvice(update);
         }
 
-        if (callBackData.equals(ConstantMessageEnum.HOME_IMPROVEMENT_FOR_PUPPY_BUTTON.getMessage())) {
-            logger.info("список рекомендаций по обустройству дома для щенка");
-            //Здесь будет метод для обработки команды
+        if (callBackData.equals(CallBackDataEnum.HOME_IMPROVEMENT_FOR_PUPPY_BUTTON.getMessage())) {
+            logger.info("пользователь нажал на кнопку список рекомендаций по обустройству дома для щенка");
+            sendHomeImprovementForPuppy(update);
         }
 
-        if (callBackData.equals(ConstantMessageEnum.HOME_IMPROVEMENT_FOR_AN_ADULT_DOG_BUTTON.getMessage())) {
-            logger.info("список рекомендаций по обустройству дома для взрослой собаки");
-            //Здесь будет метод для обработки команды
+        if (callBackData.equals(CallBackDataEnum.HOME_IMPROVEMENT_FOR_AN_ADULT_DOG_BUTTON.getMessage())) {
+            logger.info("пользователь нажал на кнопку список рекомендаций по обустройству дома для взрослой собаки");
+            sendHomeImprovementForAdultDog(update);
         }
 
-        if (callBackData.equals(ConstantMessageEnum.HOME_IMPROVEMENT_FOR_DOG_WITH_DISABILITY_BUTTON.getMessage())) {
-            logger.info("список рекомендаций по обустройству дома для собаки с ограниченными возможностями");
-            //Здесь будет метод для обработки команды
+        if (callBackData.equals(CallBackDataEnum.HOME_IMPROVEMENT_FOR_DOG_WITH_SPECIAL_NEEDS_BUTTON.getMessage())) {
+            logger.info("пользователь нажал на кнопку список рекомендаций по обустройству дома для собаки с ограниченными возможностями");
+            sendHomeImprovementForDogsWithSpecialNeeds(update);
         }
 
-        if (callBackData.equals(ConstantMessageEnum.CYNOLOGISTS_ADVICE_ON_INITIAL_COMMUNICATION_BUTTON.getMessage())) {
-            logger.info("советы кинолога по первичному общению с собакой");
-            //Здесь будет метод для обработки команды
+        if (callBackData.equals(CallBackDataEnum.CYNOLOGISTS_ADVICE_ON_INITIAL_COMMUNICATION_BUTTON.getMessage())) {
+            logger.info("пользователь нажал на кнопку советы кинолога по первичному общению с собакой");
+            sendCynologistsAdviceOnInitialCommunication(update);
         }
-        if (callBackData.equals(ConstantMessageEnum.RECOMMENDATIONS_FOR_PROVEN_CYNOLOGISTS_BUTTON.getMessage())) {
-            logger.info("пользователь нажад на кнопку рекомендации по проверенным кинологам для дальнейшего обращения к ним.");
-            //Здесь будет метод для обработки команды
+        if (callBackData.equals(CallBackDataEnum.RECOMMENDATIONS_FOR_PROVEN_CYNOLOGISTS_BUTTON.getMessage())) {
+            logger.info("пользователь нажал на кнопку рекомендаций по проверенным кинологам для дальнейшего обращения к ним.");
+            sendRecommendationsForProvenCynologists(update);
         }
-        if (callBackData.equals(ConstantMessageEnum.CANDIDATE_REGISTRATION_BUTTON.getMessage())) {
-            logger.info("пользователь нажад на кнопку  записать контактные данные для связи ");
-            //Здесь будет метод для обработки команды
+        if (callBackData.equals(CallBackDataEnum.CANDIDATE_REGISTRATION_BUTTON.getMessage())) {
+            logger.info("пользователь нажал на кнопку записи контактных данных для связи");
+            registration(update);
         }
-        if (callBackData.equals(ConstantMessageEnum.REASON_FOR_REFUSAL_BUTTON.getMessage())) {
-            logger.info("пользователь нажад на кнопку почему могут отказать и не дать забрать собаку из приюта");
-            //Здесь будет метод для обработки команды
+        if (callBackData.equals(CallBackDataEnum.REASON_FOR_REFUSAL_BUTTON.getMessage())) {
+            logger.info("пользователь нажал на кнопку почему могут отказать и не дать забрать собаку из приюта");
+            sendReasonForRefusal(update);
         }
     }
 
@@ -214,6 +210,88 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
         String safetyRegulationsMessage = ConstantMessageEnum.SHELTER_SAFETY_REGULATIONS.getMessage();
         infoWithBackButtonToInformationMenu(update, safetyRegulationsMessage);
     }
+
+    /**
+     * Вывод информации о правилах знакомства с собакой
+     */
+    private void sendDogAcquaintanceRules(Update update) {
+        String informationMessage = ConstantMessageEnum.DOG_ACQUAINTANCE_RULES.getMessage();
+        infoWithBackButtonToTakeTheDogMenu(update, informationMessage);
+    }
+
+    /**
+     * Вывод списка документов, необходимых для того, чтобы взять собаку из приюта
+     */
+    private void sendDocumentsForDogs(Update update) {
+        String informationMessage = ConstantMessageEnum.DOCUMENTS_FOR_DOGS.getMessage();
+        infoWithBackButtonToTakeTheDogMenu(update, informationMessage);
+    }
+
+    /**
+     * Вывод списка рекомендаций по транспортировке животного
+     */
+    private void sendTransportationAdvice(Update update) {
+        String informationMessage = ConstantMessageEnum.TRANSPORTATION_ADVICE.getMessage();
+        infoWithBackButtonToTakeTheDogMenu(update, informationMessage);
+    }
+
+    /**
+     * Вывод списка рекомендаций по обустройству дома для щенка
+     */
+    private void sendHomeImprovementForPuppy(Update update) {
+        String informationMessage = ConstantMessageEnum.HOME_IMPROVEMENT_FOR_PUPPY.getMessage();
+        infoWithBackButtonToTakeTheDogMenu(update, informationMessage);
+    }
+
+    /**
+     * Вывод списка рекомендаций по обустройству дома для взрослой собаки
+     */
+    private void sendHomeImprovementForAdultDog(Update update) {
+        String informationMessage = ConstantMessageEnum.HOME_IMPROVEMENT_FOR_AN_ADULT_DOG.getMessage();
+        infoWithBackButtonToTakeTheDogMenu(update, informationMessage);
+    }
+
+    /**
+     * Вывод списка рекомендаций по обустройству дома для собаки с ограниченными возможностями
+     */
+    private void sendHomeImprovementForDogsWithSpecialNeeds(Update update) {
+        String informationMessage = ConstantMessageEnum.HOME_IMPROVEMENT_FOR_DOG_WITH_SPECIAL_NEEDS.getMessage();
+        infoWithBackButtonToTakeTheDogMenu(update, informationMessage);
+    }
+
+    /**
+     * Вывод советов кинолога по первичному общению с собакой
+     */
+    private void sendCynologistsAdviceOnInitialCommunication(Update update) {
+        String informationMessage = ConstantMessageEnum.CYNOLOGISTS_ADVICE_ON_INITIAL_COMMUNICATION.getMessage();
+        infoWithBackButtonToTakeTheDogMenu(update, informationMessage);
+    }
+
+    /**
+     * Вывод рекомендаций по проверенным кинологам для дальнейшего обращения к ним
+     */
+    private void sendRecommendationsForProvenCynologists(Update update) {
+        String informationMessage = ConstantMessageEnum.RECOMMENDATIONS_FOR_PROVEN_CYNOLOGISTS.getMessage();
+        infoWithBackButtonToTakeTheDogMenu(update, informationMessage);
+    }
+
+    /**
+     * Запись контактных данных для связи
+     */
+    private void registration(Update update) {
+        String informationMessage = ConstantMessageEnum.CANDIDATE_REGISTRATION.getMessage();
+        startRegistration = true;
+        infoWithBackButtonToTakeTheDogMenu(update, informationMessage);
+    }
+
+    /**
+     * Вывод информации почему могут отказать и не дать забрать собаку из приюта
+     */
+    private void sendReasonForRefusal(Update update) {
+        String informationMessage = ConstantMessageEnum.REASON_FOR_REFUSAL.getMessage();
+        infoWithBackButtonToTakeTheDogMenu(update, informationMessage);
+    }
+
 
     /**
      * Вывод приветственного сообщения по команде /start
@@ -309,22 +387,22 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
 
         var informationButton = new InlineKeyboardButton();
         informationButton.setText("Информация о приюте");
-        informationButton.setCallbackData(ConstantMessageEnum.INFORMATION_BUTTON.getMessage());
+        informationButton.setCallbackData(CallBackDataEnum.INFORMATION_BUTTON.getMessage());
         rowFirst.add(informationButton);
 
         var howTakePetButton = new InlineKeyboardButton();
         howTakePetButton.setText("Как взять собаку из приюта");
-        howTakePetButton.setCallbackData(ConstantMessageEnum.HOW_TAKE_PET_BUTTON.getMessage());
+        howTakePetButton.setCallbackData(CallBackDataEnum.HOW_TAKE_PET_BUTTON.getMessage());
         rowSecond.add(howTakePetButton);
 
         var sendReportButton = new InlineKeyboardButton();
         sendReportButton.setText("Прислать отчет о питомце");
-        sendReportButton.setCallbackData(ConstantMessageEnum.SEND_REPORT_BUTTON.getMessage());
+        sendReportButton.setCallbackData(CallBackDataEnum.SEND_REPORT_BUTTON.getMessage());
         rowThird.add(sendReportButton);
 
         var callVolunteerButton = new InlineKeyboardButton();
         callVolunteerButton.setText("Позвать волонтера");
-        callVolunteerButton.setCallbackData(ConstantMessageEnum.CALL_VOLUNTEER_BUTTON.getMessage());
+        callVolunteerButton.setCallbackData(CallBackDataEnum.CALL_VOLUNTEER_BUTTON.getMessage());
         rowForth.add(callVolunteerButton);
 
         rows.add(rowFirst);
@@ -362,44 +440,37 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
         List<InlineKeyboardButton> rowThird = new ArrayList<>();
         List<InlineKeyboardButton> rowFourth = new ArrayList<>();
         List<InlineKeyboardButton> rowFifth = new ArrayList<>();
-        List<InlineKeyboardButton> rowSixth = new ArrayList<>();
 
         var aboutTheShelterButton = new InlineKeyboardButton();
         aboutTheShelterButton.setText("О приюте");
-        aboutTheShelterButton.setCallbackData(ConstantMessageEnum.ABOUT_THE_SHELTER.getMessage());
+        aboutTheShelterButton.setCallbackData(CallBackDataEnum.ABOUT_THE_SHELTER.getMessage());
         rowFirst.add(aboutTheShelterButton);
 
         var location = new InlineKeyboardButton();
         location.setText("Адрес, схема проезда,\n режим работы");
-        location.setCallbackData(ConstantMessageEnum.LOCATION.getMessage());
+        location.setCallbackData(CallBackDataEnum.LOCATION.getMessage());
         rowSecond.add(location);
 
         var safetyAtTheShelter = new InlineKeyboardButton();
         safetyAtTheShelter.setText("ТБ на территории приюта");
-        safetyAtTheShelter.setCallbackData(ConstantMessageEnum.SAFETY_AT_THE_SHELTER.getMessage());
+        safetyAtTheShelter.setCallbackData(CallBackDataEnum.SAFETY_AT_THE_SHELTER.getMessage());
         rowThird.add(safetyAtTheShelter);
 
         var callVolunteerButton = new InlineKeyboardButton();
         callVolunteerButton.setText("Позвать волонтера");
-        callVolunteerButton.setCallbackData(ConstantMessageEnum.CALL_VOLUNTEER_BUTTON.getMessage());
+        callVolunteerButton.setCallbackData(CallBackDataEnum.CALL_VOLUNTEER_BUTTON.getMessage());
         rowFourth.add(callVolunteerButton);
-
-        var registration = new InlineKeyboardButton();
-        registration.setText("Регистрация волонтера");
-        registration.setCallbackData(ConstantMessageEnum.REGISTRATION_VOLUNTEER.getMessage());
-        rowFifth.add(registration);
 
         var backToMainMenu = new InlineKeyboardButton();
         backToMainMenu.setText("Назад");
-        backToMainMenu.setCallbackData(ConstantMessageEnum.BACK_TO_MAIN_MENU.getMessage());
-        rowSixth.add(backToMainMenu);
+        backToMainMenu.setCallbackData(CallBackDataEnum.BACK_TO_MAIN_MENU.getMessage());
+        rowFifth.add(backToMainMenu);
 
         informationMenuRows.add(rowFirst);
         informationMenuRows.add(rowSecond);
         informationMenuRows.add(rowThird);
         informationMenuRows.add(rowFourth);
         informationMenuRows.add(rowFifth);
-        informationMenuRows.add(rowSixth);
 
         informationMenuKeyboard.setKeyboard(informationMenuRows);
 
@@ -436,63 +507,62 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
 
         var puppyDatingRulesButton = new InlineKeyboardButton();
         puppyDatingRulesButton.setText("Правила знакомства с собакой");
-        puppyDatingRulesButton.setCallbackData(ConstantMessageEnum.PUPPY_DATING_RULES_BUTTON.getMessage());
+        puppyDatingRulesButton.setCallbackData(CallBackDataEnum.DOG_ACQUAINTANCE_RULES_BUTTON.getMessage());
         rowFirst.add(puppyDatingRulesButton);
 
         var documentsForDogsButton = new InlineKeyboardButton();
         documentsForDogsButton.setText("Список документов, чтобы взять собаку из приюта");
-        documentsForDogsButton.setCallbackData(ConstantMessageEnum.DOCUMENTS_FOR_DOGS_BUTTON.getMessage());
+        documentsForDogsButton.setCallbackData(CallBackDataEnum.DOCUMENTS_FOR_DOGS_BUTTON.getMessage());
         rowSecond.add(documentsForDogsButton);
 
         var transportationAdviceButton = new InlineKeyboardButton();
         transportationAdviceButton.setText("Рекомендации по транспортировке животного");
-        transportationAdviceButton.setCallbackData(ConstantMessageEnum.TRANSPORTATION_ADVICE_BUTTON.getMessage());
+        transportationAdviceButton.setCallbackData(CallBackDataEnum.TRANSPORTATION_ADVICE_BUTTON.getMessage());
         rowThird.add(transportationAdviceButton);
-
 
         var homeImprovementForPuppyButton = new InlineKeyboardButton();
         homeImprovementForPuppyButton.setText("Обустройство дома для щенка");
-        homeImprovementForPuppyButton.setCallbackData(ConstantMessageEnum.HOME_IMPROVEMENT_FOR_PUPPY_BUTTON.getMessage());
+        homeImprovementForPuppyButton.setCallbackData(CallBackDataEnum.HOME_IMPROVEMENT_FOR_PUPPY_BUTTON.getMessage());
         rowFourth.add(homeImprovementForPuppyButton);
 
         var homeImprovementForAnAdultDogButton = new InlineKeyboardButton();
         homeImprovementForAnAdultDogButton.setText("Обустройство дома для взрослой собаки");
-        homeImprovementForAnAdultDogButton.setCallbackData(ConstantMessageEnum.HOME_IMPROVEMENT_FOR_AN_ADULT_DOG_BUTTON.getMessage());
+        homeImprovementForAnAdultDogButton.setCallbackData(CallBackDataEnum.HOME_IMPROVEMENT_FOR_AN_ADULT_DOG_BUTTON.getMessage());
         rowFifth.add(homeImprovementForAnAdultDogButton);
 
         var homeImprovementForDogWithDisability = new InlineKeyboardButton();
         homeImprovementForDogWithDisability.setText("Обустройство дома для собаки с ограниченными возможностями");
-        homeImprovementForDogWithDisability.setCallbackData(ConstantMessageEnum.HOME_IMPROVEMENT_FOR_DOG_WITH_DISABILITY_BUTTON.getMessage());
+        homeImprovementForDogWithDisability.setCallbackData(CallBackDataEnum.HOME_IMPROVEMENT_FOR_DOG_WITH_SPECIAL_NEEDS_BUTTON.getMessage());
         rowSixth.add(homeImprovementForDogWithDisability);
 
         var cynologistsAdviceOnInitialCommunicationButton = new InlineKeyboardButton();
         cynologistsAdviceOnInitialCommunicationButton.setText("Советы кинолога по первичному общению с собакой");
-        cynologistsAdviceOnInitialCommunicationButton.setCallbackData(ConstantMessageEnum.CYNOLOGISTS_ADVICE_ON_INITIAL_COMMUNICATION_BUTTON.getMessage());
+        cynologistsAdviceOnInitialCommunicationButton.setCallbackData(CallBackDataEnum.CYNOLOGISTS_ADVICE_ON_INITIAL_COMMUNICATION_BUTTON.getMessage());
         rowSeventh.add(cynologistsAdviceOnInitialCommunicationButton);
 
         var recommendationsForProvenCynologistsButton = new InlineKeyboardButton();
         recommendationsForProvenCynologistsButton.setText("Рекомендации по проверенным кинологам");
-        recommendationsForProvenCynologistsButton.setCallbackData(ConstantMessageEnum.RECOMMENDATIONS_FOR_PROVEN_CYNOLOGISTS_BUTTON.getMessage());
+        recommendationsForProvenCynologistsButton.setCallbackData(CallBackDataEnum.RECOMMENDATIONS_FOR_PROVEN_CYNOLOGISTS_BUTTON.getMessage());
         rowEighth.add(recommendationsForProvenCynologistsButton);
 
         var reasonsForRefusalButton = new InlineKeyboardButton();
         reasonsForRefusalButton.setText("Список причин, почему могут отказать");
-        reasonsForRefusalButton.setCallbackData(ConstantMessageEnum.REASON_FOR_REFUSAL_BUTTON.getMessage());
+        reasonsForRefusalButton.setCallbackData(CallBackDataEnum.REASON_FOR_REFUSAL_BUTTON.getMessage());
         rowNinth.add(reasonsForRefusalButton);
 
         var candidateRegistrationButton = new InlineKeyboardButton();
         candidateRegistrationButton.setText("Запись контактных данных");
-        candidateRegistrationButton.setCallbackData(ConstantMessageEnum.CANDIDATE_REGISTRATION_BUTTON.getMessage());
+        candidateRegistrationButton.setCallbackData(CallBackDataEnum.CANDIDATE_REGISTRATION_BUTTON.getMessage());
         rowTenth.add(candidateRegistrationButton);
 
         var callVolunteerButton = new InlineKeyboardButton();
         callVolunteerButton.setText("Позвать волонтера");
-        callVolunteerButton.setCallbackData(ConstantMessageEnum.CALL_VOLUNTEER_BUTTON.getMessage());
+        callVolunteerButton.setCallbackData(CallBackDataEnum.CALL_VOLUNTEER_BUTTON.getMessage());
         rowEleventh.add(callVolunteerButton);
 
         var backToMainMenu = new InlineKeyboardButton();
         backToMainMenu.setText("Назад");
-        backToMainMenu.setCallbackData(ConstantMessageEnum.BACK_TO_MAIN_MENU.getMessage());
+        backToMainMenu.setCallbackData(CallBackDataEnum.BACK_TO_MAIN_MENU.getMessage());
         rowTwelfth.add(backToMainMenu);
 
         theDogMenuRows.add(rowFirst);
@@ -532,7 +602,7 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
 
         var backToInformationMenu = new InlineKeyboardButton();
         backToInformationMenu.setText("Назад");
-        backToInformationMenu.setCallbackData(ConstantMessageEnum.INFORMATION_BUTTON.getMessage());
+        backToInformationMenu.setCallbackData(CallBackDataEnum.INFORMATION_BUTTON.getMessage());
         rowOne.add(backToInformationMenu);
 
         informationMenuRows.add(rowOne);
@@ -560,7 +630,7 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
 
         var backToTakeDogMenu = new InlineKeyboardButton();
         backToTakeDogMenu.setText("Назад");
-        backToTakeDogMenu.setCallbackData(ConstantMessageEnum.HOW_TAKE_PET_BUTTON.getMessage());
+        backToTakeDogMenu.setCallbackData(CallBackDataEnum.HOW_TAKE_PET_BUTTON.getMessage());
         rowOne.add(backToTakeDogMenu);
 
         takeDogMenuRows.add(rowOne);
