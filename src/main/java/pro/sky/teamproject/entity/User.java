@@ -1,6 +1,7 @@
 package pro.sky.teamproject.entity;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "users")
@@ -22,6 +23,10 @@ public class User {
 
     @Column(name = "phone")
     private Long phone;
+
+    public User() {
+
+    }
 
     public Long getId() {
         return id;
@@ -70,5 +75,22 @@ public class User {
                 ", userName='" + userName + '\'' +
                 ", chatId=" + chatId +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        User user = (User) o;
+        return Objects.equals(id, user.id) && Objects.equals(userName, user.userName) && Objects.equals(chatId, user.chatId) && Objects.equals(fullName, user.fullName) && Objects.equals(phone, user.phone);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, userName, chatId, fullName, phone);
     }
 }
