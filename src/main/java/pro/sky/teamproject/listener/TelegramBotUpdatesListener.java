@@ -27,6 +27,7 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
     private final TelegramBotConfiguration configuration;
     private final UserService userService;
     Boolean startRegistration = false;
+    Boolean startCatRegistration = false;
 
     private final Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
 
@@ -64,14 +65,14 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
                 }
                 sendMessageToUser(chatId, ConstantMessageEnum.BOT_INFORMATION.getMessage());
                 shelterMenuKeyboard(update);
-            } else if (messageText.matches("[А-Я][а-я]+\\s[А-Я][а-я]+") && startRegistration) {
+            } else if (messageText.matches("[А-Я][а-я]+\\s[А-Я][а-я]+") && (startRegistration || startCatRegistration)) {
                 logger.info("пользователь ввел свое имя");
                 user = userService.findUserByChatId(chatId).get();
                 user.setFullName(messageText);
                 userService.updateUser(user);
                 String textMessage = "Введите свой номер телефона, только цифры, например '79000000000'";
                 sendMessageToUser(chatId, textMessage);
-            } else if (messageText.matches("^\\d{5,15}$") && startRegistration) {
+            } else if (messageText.matches("^\\d{5,15}$") && (startRegistration || startCatRegistration)) {
                 logger.info("пользователь ввел номер телефона");
                 Optional<User> userByChatId = userService.findUserByChatId(chatId);
                 if (userByChatId.isPresent()) {
@@ -479,7 +480,7 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
      */
     private void registrationUserCat(Update update) {
         String informationMessage = ConstantCatMessageEnum.CANDIDATE_CAT_REGISTRATION.getMessage();
-        startRegistration = true;
+        startCatRegistration = true;
         infoWithBackButtonToInformationCatMenu(update, informationMessage);
     }
 
