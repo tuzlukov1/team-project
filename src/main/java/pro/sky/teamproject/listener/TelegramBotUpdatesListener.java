@@ -133,10 +133,13 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
         }
 
         if (callBackData.equals(CallBackDataEnum.SEND_REPORT_BUTTON.getMessage())) {
-            logger.info("пользователь нажал на кнопку прислать отчет о питомце");
-            String textMessage = "Вывод меню 3-го. этапа - в разработке";
-            sendEditMessageToUser(update, textMessage);
-            //Здесь будет метод для обработки команды
+            logger.info("пользователь нажал на кнопку прислать отчет о собаке");
+            sendDogReport(update);
+        }
+
+        if (callBackData.equals(CallBackDataEnum.SEND_CAT_REPORT_BUTTON.getMessage())) {
+            logger.info("пользователь нажал на кнопку прислать отчет о кошке");
+            sendCatReport(update);
         }
 
         if (callBackData.equals(CallBackDataEnum.CALL_VOLUNTEER_BUTTON.getMessage())) {
@@ -500,6 +503,22 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
         infoWithBackButtonToTakeTheCatMenu(update, informationMessage);
     }
 
+    /**
+     * Вывод информации по отправке отчета в собачий приют
+     */
+    private void sendDogReport(Update update) {
+        String informationMessage = ConstantMessageEnum.DOG_REPORT.getMessage();
+        infoWithBackButtonToDogMainMenu(update, informationMessage);
+    }
+
+    /**
+     * Вывод информации по отправке отчета в кошачий приют
+     */
+    private void sendCatReport(Update update) {
+        String informationMessage = ConstantCatMessageEnum.CAT_REPORT.getMessage();
+        infoWithBackButtonToCatMainMenu(update, informationMessage);
+    }
+
 
 
     /**
@@ -655,7 +674,7 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
 
         var sendReportButton = new InlineKeyboardButton();
         sendReportButton.setText("Прислать отчет о питомце");
-        sendReportButton.setCallbackData(CallBackDataEnum.SEND_REPORT_BUTTON.getMessage());
+        sendReportButton.setCallbackData(CallBackDataEnum.SEND_CAT_REPORT_BUTTON.getMessage());
         rowThird.add(sendReportButton);
 
         var callVolunteerButton = new InlineKeyboardButton();
@@ -1204,6 +1223,77 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
         takeCatMenuKeyboard.setKeyboard(takeCatMenuRows);
 
         message.setReplyMarkup(takeCatMenuKeyboard);
+        executeEditMessage(message);
+    }
+
+    /**
+     * Вывод кнопки назад в меню c запросами в собачьем приюте
+     */
+    private void infoWithBackButtonToDogMainMenu(Update update, String text) {
+        long messageId = update.getCallbackQuery().getMessage().getMessageId();
+        long chatId = update.getCallbackQuery().getMessage().getChatId();
+        EditMessageText message = new EditMessageText();
+        message.setChatId(String.valueOf(chatId));
+        message.setText(text);
+        message.setMessageId((int) messageId);
+
+        InlineKeyboardMarkup DogMainMenuKeyboard = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> DogMainMenuRows = new ArrayList<>();
+        List<InlineKeyboardButton> rowFirst = new ArrayList<>();
+        List<InlineKeyboardButton> rowSecond = new ArrayList<>();
+
+        var backToTakeDogMenu = new InlineKeyboardButton();
+        backToTakeDogMenu.setText("Назад");
+        backToTakeDogMenu.setCallbackData(CallBackDataEnum.DOG_SHELTER_BUTTON.getMessage());
+        rowFirst.add(backToTakeDogMenu);
+
+        var callVolunteerButton = new InlineKeyboardButton();
+        callVolunteerButton.setText("Позвать волонтера");
+        callVolunteerButton.setCallbackData(CallBackDataEnum.CALL_VOLUNTEER_BUTTON.getMessage());
+        rowSecond.add(callVolunteerButton);
+
+
+
+        DogMainMenuRows.add(rowFirst);
+        DogMainMenuRows.add(rowSecond);
+
+        DogMainMenuKeyboard.setKeyboard(DogMainMenuRows);
+
+        message.setReplyMarkup(DogMainMenuKeyboard);
+        executeEditMessage(message);
+    }
+
+    private void infoWithBackButtonToCatMainMenu(Update update, String text) {
+        long messageId = update.getCallbackQuery().getMessage().getMessageId();
+        long chatId = update.getCallbackQuery().getMessage().getChatId();
+        EditMessageText message = new EditMessageText();
+        message.setChatId(String.valueOf(chatId));
+        message.setText(text);
+        message.setMessageId((int) messageId);
+
+        InlineKeyboardMarkup CatMainMenuKeyboard = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> CatMainMenuRows = new ArrayList<>();
+        List<InlineKeyboardButton> rowFirst = new ArrayList<>();
+        List<InlineKeyboardButton> rowSecond = new ArrayList<>();
+
+        var backToTakeDogMenu = new InlineKeyboardButton();
+        backToTakeDogMenu.setText("Назад");
+        backToTakeDogMenu.setCallbackData(CallBackDataEnum.CAT_SHELTER_BUTTON.getMessage());
+        rowFirst.add(backToTakeDogMenu);
+
+        var callVolunteerButton = new InlineKeyboardButton();
+        callVolunteerButton.setText("Позвать волонтера");
+        callVolunteerButton.setCallbackData(CallBackDataEnum.CALL_VOLUNTEER_BUTTON.getMessage());
+        rowSecond.add(callVolunteerButton);
+
+
+
+        CatMainMenuRows.add(rowFirst);
+        CatMainMenuRows.add(rowSecond);
+
+        CatMainMenuKeyboard.setKeyboard(CatMainMenuRows);
+
+        message.setReplyMarkup(CatMainMenuKeyboard);
         executeEditMessage(message);
     }
 }

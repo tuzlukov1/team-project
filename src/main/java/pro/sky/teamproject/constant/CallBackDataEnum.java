@@ -32,6 +32,7 @@ public enum CallBackDataEnum {
     SHELTER_MENU_BUTTON("ShelterMenuButton"),
     CAT_SHELTER_BUTTON("catShelterButton"),
     ABOUT_CAT_SHELTER_BUTTON("aboutCatShelterButton"),
+    SEND_CAT_REPORT_BUTTON("sendCatReportButton"),
     CANDIDATE_CAT_REGISTRATION("candidateCAtRegistration"),
     CAT_LOCATIONS("CatLocations"),
     SHELTER_CAT_INFORMATION_BUTTON("shelterCatInformationButton"),
