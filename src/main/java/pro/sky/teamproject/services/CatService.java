@@ -4,31 +4,31 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
-import pro.sky.teamproject.entity.Animal;
-import pro.sky.teamproject.repository.AnimalRepository;
+import pro.sky.teamproject.entity.AnimalCat;
+import pro.sky.teamproject.repository.AnimalCatRepository;
 
 import java.util.Collection;
 
 @Service
-public class AnimalService {
+public class CatService {
 
-    private final Logger logger = LoggerFactory.getLogger(AnimalService.class);
+    private final Logger logger = LoggerFactory.getLogger(CatService.class);
 
-    private final AnimalRepository animalRepository;
+    private final AnimalCatRepository animalCatRepository;
 
-    public AnimalService(AnimalRepository animalRepository) {
-        this.animalRepository = animalRepository;
+    public CatService(AnimalCatRepository animalCatRepository) {
+        this.animalCatRepository = animalCatRepository;
     }
 
     /**
      * Запись данных о животном в БД.
      * Используется метод репозитория {@link JpaRepository#save(Object)}
-     * @param animal данные о животном в формате JSON
+     * @param animalCat данные о животном в формате JSON
      * @return созданная запись в базе данных
      */
-    public Animal addAnimal(Animal animal) {
-        logger.debug("Was invoked method for create animal");
-        return animalRepository.save(animal);
+    public AnimalCat addAnimal(AnimalCat animalCat) {
+        logger.debug("Was invoked method for create animalCat");
+        return animalCatRepository.save(animalCat);
     }
 
     /**
@@ -37,22 +37,22 @@ public class AnimalService {
      * @param id идентификатор искомого животного, не может быть null
      * @return данные о животном в формате JSON
      */
-    public Animal findAnimalById(long id) {
-        logger.debug("Was invoked method for get animal info with id = {} ", id);
-        Animal animal = animalRepository.findById(id).orElse(null);
-        logger.warn("Response {} ", animal);
-        return animal;
+    public AnimalCat findAnimalById(long id) {
+        logger.debug("Was invoked method for get animalCat info with id = {} ", id);
+        AnimalCat animalCat = animalCatRepository.findById(id).orElse(null);
+        logger.warn("Response {} ", animalCat);
+        return animalCat;
     }
 
     /**
      * Внесение изменений в данные о животном в БД.
      * Используется метод репозитория {@link JpaRepository#save(Object)}
-     * @param animal данные о животном в формате JSON
+     * @param animalCat данные о животном в формате JSON
      * @return измененная запись в базе данных
      */
-    public Animal editAnimal(Animal animal) {
-        logger.debug("Was invoked method for edith animal");
-        return animalRepository.save(animal);
+    public AnimalCat editAnimal(AnimalCat animalCat) {
+        logger.debug("Was invoked method for edith animalCat");
+        return animalCatRepository.save(animalCat);
     }
 
     /**
@@ -61,41 +61,41 @@ public class AnimalService {
      * @param id идентификатор животного, не может быть null
      */
     public void deleteAnimal(long id) {
-        logger.debug("Was invoked method for delete animal");
-        animalRepository.deleteById(id);
+        logger.debug("Was invoked method for delete animalCat");
+        animalCatRepository.deleteById(id);
     }
 
     /**
      * Поиск животного в БД по имени.
-     * Используется метод репозитория {@link AnimalRepository#findByNameIgnoreCase(String)}
+     * Используется метод репозитория {@link AnimalCatRepository#findByNameIgnoreCase(String)}
      * @param name имя искомого животного
      * @return список животных (объектов animal) с искомым именем, в фомате JSON
      */
-    public Collection<Animal> findAnimalByName(String name) {
+    public Collection<AnimalCat> findAnimalByName(String name) {
         logger.debug("Was invoked method for find by name");
-        return animalRepository.findByNameIgnoreCase(name);
+        return animalCatRepository.findByNameIgnoreCase(name);
     }
 
     /**
      * Поиск животного в БД по породе.
-     * Используется метод репозитория {@link AnimalRepository#findByBreedIgnoreCase(String)}
+     * Используется метод репозитория {@link AnimalCatRepository#findByBreedIgnoreCase(String)}
      * @param breed порода искомого животного
      * @return список животных (объектов animal) искомой породы, в фомате JSON
      */
-    public Collection<Animal> findAnimalByBreed(String breed) {
+    public Collection<AnimalCat> findAnimalByBreed(String breed) {
         logger.debug("Was invoked method for find by breed");
-        return animalRepository.findByBreedIgnoreCase(breed);
+        return animalCatRepository.findByBreedIgnoreCase(breed);
     }
 
     /**
      * Поиск животного в БД по возрасту.
-     * Используется метод репозитория {@link AnimalRepository#findByAge(Integer)}
+     * Используется метод репозитория {@link AnimalCatRepository#findByAge(Integer)}
      * @param age возраст искомого животного
      * @return список животных (объектов animal) искомого возраста, в фомате JSON
      */
-    public Collection<Animal> findAnimalByAge(Integer age) {
+    public Collection<AnimalCat> findAnimalByAge(Integer age) {
         logger.debug("Was invoked method for find by age");
-        return animalRepository.findByAge(age);
+        return animalCatRepository.findByAge(age);
     }
 
     /**
@@ -103,8 +103,8 @@ public class AnimalService {
      * Используется метод репозитория {@link JpaRepository#findAll()}
      * @return список всех имеющихся животных (объектов animal) из БД, в фомате JSON
      */
-    public Collection<Animal> findAllAnimal() {
+    public Collection<AnimalCat> findAllAnimal() {
         logger.debug("Was invoked method for find all");
-        return animalRepository.findAll();
+        return animalCatRepository.findAll();
     }
 }

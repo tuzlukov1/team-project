@@ -10,10 +10,4 @@ import java.util.List;
 public interface UsersRepository extends JpaRepository<User, Long> {
 
     User findUserByChatId(final Long chatId);
-
-    List<User> findUsersByUserNameIgnoreCase(String name);
-
-    List<User> findUsersByFullNameIgnoreCase(String name);
-
-    List<User> findUsersByPhone(Long phone);
 }
