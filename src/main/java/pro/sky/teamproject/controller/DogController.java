@@ -9,20 +9,20 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pro.sky.teamproject.entity.Animal;
-import pro.sky.teamproject.services.AnimalService;
+import pro.sky.teamproject.entity.AnimalDog;
+import pro.sky.teamproject.services.DogService;
 
 import java.util.Collection;
 import java.util.Collections;
 
 @RestController
-@RequestMapping("/animal")
-public class AnimalController {
+@RequestMapping("/dog")
+public class DogController {
 
-    private final AnimalService animalService;
+    private final DogService dogService;
 
-    public AnimalController(AnimalService animalService) {
-        this.animalService = animalService;
+    public DogController(DogService dogService) {
+        this.dogService = dogService;
     }
 
     @Operation(summary = "Добавление данных о новом животном в БД.",
@@ -31,7 +31,7 @@ public class AnimalController {
                             " БД генерирует его самостоятельно и выводит в ответе",
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = Animal.class)
+                            schema = @Schema(implementation = AnimalDog.class)
                     )
             ),
             responses = {
@@ -40,15 +40,15 @@ public class AnimalController {
                             description = "Вывод сохраненных данных в БД с присвоенным id",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = Animal.class)
+                                    schema = @Schema(implementation = AnimalDog.class)
                             )
                     )
             },
-            tags = "Animals"
+            tags = "Shelter_dog"
     )
     @PostMapping
-    public Animal createAnimal(@RequestBody Animal animal) {
-        return animalService.addAnimal(animal);
+    public AnimalDog createAnimal(@RequestBody AnimalDog animalDog) {
+        return dogService.addAnimal(animalDog);
     }
 
     @Operation(
@@ -59,16 +59,16 @@ public class AnimalController {
                             description = "Получены данные о животном",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = Animal.class)
+                                    schema = @Schema(implementation = AnimalDog.class)
                             )
                     )
             },
-            tags = "Animals"
+            tags = "Shelter_dog"
     )
     @GetMapping("{id}")
-    public ResponseEntity<Animal> getAnimalInfo(@Parameter(description = "идентификатор животного в БД")
+    public ResponseEntity<AnimalDog> getAnimalInfo(@Parameter(description = "идентификатор животного в БД")
                                                 @PathVariable long id) {
-        Animal foundAnimal = animalService.findAnimalById(id);
+        AnimalDog foundAnimal = dogService.findAnimalById(id);
         if (foundAnimal == null) {
             return ResponseEntity.notFound().build();
         }
@@ -81,7 +81,7 @@ public class AnimalController {
                             "если не будет указан, то будет создана новая запись в БД",
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = Animal.class)
+                            schema = @Schema(implementation = AnimalDog.class)
                     )
             ),
             responses = {
@@ -90,15 +90,15 @@ public class AnimalController {
                             description = "Вывод измененных данных в БД",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = Animal.class)
+                                    schema = @Schema(implementation = AnimalDog.class)
                             )
                     )
             },
-            tags = "Animals"
+            tags = "Shelter_dog"
     )
     @PutMapping
-    public Animal editAnimal(@RequestBody Animal animal) {
-        return animalService.editAnimal(animal);
+    public AnimalDog editAnimal(@RequestBody AnimalDog animalDog) {
+        return dogService.editAnimal(animalDog);
     }
 
     @Operation(
@@ -113,16 +113,16 @@ public class AnimalController {
                             description = "Удаляемая запись не найдена"
                     )
             },
-            tags = "Animals"
+            tags = "Shelter_dog"
     )
     @DeleteMapping("{id}")
     public ResponseEntity<Void> deleteAnimal(@Parameter(description = "идентификатор животного в БД")
                                              @PathVariable long id) {
-        Animal foundAnimal = animalService.findAnimalById(id);
+        AnimalDog foundAnimal = dogService.findAnimalById(id);
         if (foundAnimal == null) {
             return ResponseEntity.notFound().build();
         }
-        animalService.deleteAnimal(id);
+        dogService.deleteAnimal(id);
         return ResponseEntity.ok().build();
     }
 
@@ -135,27 +135,27 @@ public class AnimalController {
                             description = "Получен список животных",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    array = @ArraySchema(schema = @Schema(implementation = Animal.class))
+                                    array = @ArraySchema(schema = @Schema(implementation = AnimalDog.class))
                             )
                     )
             },
-            tags = "Animals"
+            tags = "Shelter_dog"
     )
     @GetMapping
-    public ResponseEntity<Collection<Animal>> findAnimal(
+    public ResponseEntity<Collection<AnimalDog>> findAnimal(
             @Parameter(description = "Имя животного") @RequestParam(required = false) String name,
             @Parameter(description = "Порода животного") @RequestParam(required = false) String breed,
             @Parameter(description = "Возраст животного") @RequestParam(required = false) Integer age) {
         if (name != null && !name.isBlank()) {
-            return ResponseEntity.ok(animalService.findAnimalByName(name));
+            return ResponseEntity.ok(dogService.findAnimalByName(name));
         }
         if (breed != null && !breed.isBlank()) {
-            return ResponseEntity.ok(animalService.findAnimalByBreed(breed));
+            return ResponseEntity.ok(dogService.findAnimalByBreed(breed));
         }
         if (age != null && age > 0) {
-            return ResponseEntity.ok(animalService.findAnimalByAge(age));
+            return ResponseEntity.ok(dogService.findAnimalByAge(age));
         }
-        Collection<Animal> foundAnimal = animalService.findAllAnimal();
+        Collection<AnimalDog> foundAnimal = dogService.findAllAnimal();
         if (foundAnimal == null) {
             return ResponseEntity.ok(Collections.emptyList());
         } else {

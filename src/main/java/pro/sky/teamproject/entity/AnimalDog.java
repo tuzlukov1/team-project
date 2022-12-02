@@ -4,8 +4,8 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "animals")
-public class Animal {
+@Table(name = "animals_dog")
+public class AnimalDog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,7 +15,7 @@ public class Animal {
     private String breed;
     private int age;
 
-    public Animal() {
+    public AnimalDog() {
 
     }
 
@@ -53,14 +53,14 @@ public class Animal {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o){
+        if (this == o) {
             return true;
         }
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Animal animal = (Animal) o;
-        return id == animal.id && age == animal.age && Objects.equals(name, animal.name) && Objects.equals(breed, animal.breed);
+        AnimalDog animalDog = (AnimalDog) o;
+        return id == animalDog.id && age == animalDog.age && Objects.equals(name, animalDog.name) && Objects.equals(breed, animalDog.breed);
     }
 
     @Override
@@ -68,4 +68,3 @@ public class Animal {
         return Objects.hash(id, name, breed, age);
     }
 }
-

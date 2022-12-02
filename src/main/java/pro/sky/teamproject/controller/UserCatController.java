@@ -9,21 +9,21 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pro.sky.teamproject.entity.User;
-import pro.sky.teamproject.services.UserService;
+import pro.sky.teamproject.entity.UserCat;
+import pro.sky.teamproject.services.UserCatService;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/user")
-public class UserController {
+@RequestMapping("/userCat")
+public class UserCatController {
 
-    private final UserService userService;
+    private final UserCatService userCatService;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public UserCatController(UserCatService userCatService) {
+        this.userCatService = userCatService;
     }
 
     @Operation(
@@ -34,16 +34,16 @@ public class UserController {
                             description = "Получены данные о пользователе",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = User.class)
+                                    schema = @Schema(implementation = UserCat.class)
                             )
                     )
             },
-            tags = "Users"
+            tags = "Cat_Owners"
     )
     @GetMapping("{id}")
-    public ResponseEntity<User> getUserInfo(@Parameter(description = "идентификатор пользователя в БД")
+    public ResponseEntity<UserCat> getUserInfo(@Parameter(description = "идентификатор пользователя в БД")
                                             @PathVariable long id) {
-        User foundUser = userService.findUserById(id);
+        UserCat foundUser = userCatService.findUserById(id);
         if (foundUser == null) {
             return ResponseEntity.notFound().build();
         }
@@ -58,7 +58,7 @@ public class UserController {
                             "иначе вы не сможете связаться с пользователем через telegram bot",
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = User.class)
+                            schema = @Schema(implementation = UserCat.class)
                     )
             ),
             responses = {
@@ -67,15 +67,15 @@ public class UserController {
                             description = "Вывод измененных данных в БД",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = User.class)
+                                    schema = @Schema(implementation = UserCat.class)
                             )
                     )
             },
-            tags = "Users"
+            tags = "Cat_Owners"
     )
     @PutMapping
-    public User editUser(@RequestBody User user) {
-        return userService.updateUser(user);
+    public UserCat editUser(@RequestBody UserCat userCat) {
+        return userCatService.updateUser(userCat);
     }
 
     @Operation(
@@ -90,16 +90,16 @@ public class UserController {
                             description = "Удаляемая запись не найдена"
                     )
             },
-            tags = "Users"
+            tags = "Cat_Owners"
     )
     @DeleteMapping("{id}")
     public ResponseEntity<Void> deleteUser(@Parameter(description = "идентификатор пользователя в БД")
                                            @PathVariable long id) {
-        User foundUser = userService.findUserById(id);
+        UserCat foundUser = userCatService.findUserById(id);
         if (foundUser == null) {
             return ResponseEntity.notFound().build();
         }
-        userService.deleteUser(id);
+        userCatService.deleteUser(id);
         return ResponseEntity.ok().build();
     }
 
@@ -113,16 +113,16 @@ public class UserController {
                             description = "Получены данные о пользователе",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = User.class)
+                                    schema = @Schema(implementation = UserCat.class)
                             )
                     )
             },
-            tags = "Users"
+            tags = "Cat_Owners"
     )
     @GetMapping("{id}/chatId")
-    public ResponseEntity<Optional<User>> getUserInfoByChatId(@Parameter(description = "идентификатор чата пользователя в БД")
+    public ResponseEntity<Optional<UserCat>> getUserInfoByChatId(@Parameter(description = "идентификатор чата пользователя в БД")
                                                               @PathVariable long id) {
-        Optional<User> foundUser = userService.findUserByChatId(id);
+        Optional<UserCat> foundUser = userCatService.findUserByChatId(id);
         if (foundUser.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
@@ -141,27 +141,27 @@ public class UserController {
                             description = "Получен список пользователей",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    array = @ArraySchema(schema = @Schema(implementation = User.class))
+                                    array = @ArraySchema(schema = @Schema(implementation = UserCat.class))
                             )
                     )
             },
-            tags = "Users"
+            tags = "Cat_Owners"
     )
     @GetMapping
-    public ResponseEntity<Collection<User>> findUser(
+    public ResponseEntity<Collection<UserCat>> findUser(
             @Parameter(description = "Имя пользователя в мессенджере Telegram") @RequestParam(required = false) String userName,
             @Parameter(description = "Имя введеное пользователем при регистрации") @RequestParam(required = false) String fullName,
             @Parameter(description = "Номер телефона пользователя") @RequestParam(required = false) Long phone) {
         if (userName != null && !userName.isBlank()) {
-            return ResponseEntity.ok(userService.findUserByUserName(userName));
+            return ResponseEntity.ok(userCatService.findUserByUserName(userName));
         }
         if (fullName != null && !fullName.isBlank()) {
-            return ResponseEntity.ok(userService.findUserByFullName(fullName));
+            return ResponseEntity.ok(userCatService.findUserByFullName(fullName));
         }
         if (phone != null && phone > 0) {
-            return ResponseEntity.ok(userService.findUserByPhone(phone));
+            return ResponseEntity.ok(userCatService.findUserByPhone(phone));
         }
-        Collection<User> foundUsers = userService.findAllUsers();
+        Collection<UserCat> foundUsers = userCatService.findAllUsers();
         if (foundUsers == null) {
             return ResponseEntity.ok(Collections.emptyList());
         } else {

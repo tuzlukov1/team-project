@@ -4,19 +4,19 @@
 CREATE TABLE users
 (
     id          SERIAL PRIMARY KEY,
-    user_name text,
+    user_name   text,
     chat_id     BIGINT,
-    full_name TEXT,
-    phone     BIGINT,
+    full_name   TEXT,
+    phone       BIGINT,
     have_animal BOOLEAN
 );
 
 CREATE TABLE animals
 (
-    id        SERIAL PRIMARY KEY,
-    name      TEXT,
-    breed      TEXT,
-    age      INTEGER
+    id    SERIAL PRIMARY KEY,
+    name  TEXT,
+    breed TEXT,
+    age   INTEGER
 );
 
 CREATE TABLE animal_avatars
