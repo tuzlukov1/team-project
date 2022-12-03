@@ -43,7 +43,7 @@ public class UserDogController {
     @GetMapping("{id}")
     public ResponseEntity<UserDog> getUserInfo(@Parameter(description = "идентификатор пользователя в БД")
                                             @PathVariable long id) {
-        UserDog foundUser = userDogService.findUserById(id);
+        UserDog foundUser = userDogService.findUserDogById(id);
         if (foundUser == null) {
             return ResponseEntity.notFound().build();
         }
@@ -75,7 +75,7 @@ public class UserDogController {
     )
     @PutMapping
     public UserDog editUser(@RequestBody UserDog userDog) {
-        return userDogService.updateUser(userDog);
+        return userDogService.updateUserDog(userDog);
     }
 
     @Operation(
@@ -95,40 +95,13 @@ public class UserDogController {
     @DeleteMapping("{id}")
     public ResponseEntity<Void> deleteUser(@Parameter(description = "идентификатор пользователя в БД")
                                            @PathVariable long id) {
-        UserDog foundUser = userDogService.findUserById(id);
+        UserDog foundUser = userDogService.findUserDogById(id);
         if (foundUser == null) {
             return ResponseEntity.notFound().build();
         }
-        userDogService.deleteUser(id);
+        userDogService.deleteUserDog(id);
         return ResponseEntity.ok().build();
     }
-
-    @Operation(
-            summary = "Поиск пользователя по его идентификатору чата в БД. " +
-                    "chatId присваивается при регистрации пользователя через " +
-                    "телеграм бота",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Получены данные о пользователе",
-                            content = @Content(
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = UserDog.class)
-                            )
-                    )
-            },
-            tags = "Dog_Owners"
-    )
-    @GetMapping("{id}/chatId")
-    public ResponseEntity<Optional<UserDog>> getUserInfoByChatId(@Parameter(description = "идентификатор чата пользователя в БД")
-                                                              @PathVariable long id) {
-        Optional<UserDog> foundUser = userDogService.findUserByChatId(id);
-        if (foundUser.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(foundUser);
-    }
-
 
     @Operation(
             summary = "Поиск пользователей по имени из мессенджера Telegram, " +
@@ -149,19 +122,19 @@ public class UserDogController {
     )
     @GetMapping
     public ResponseEntity<Collection<UserDog>> findUser(
-            @Parameter(description = "Имя пользователя в мессенджере Telegram") @RequestParam(required = false) String userName,
+            @Parameter(description = "Id пользователя") @RequestParam(required = false) Long userId,
             @Parameter(description = "Имя введеное пользователем при регистрации") @RequestParam(required = false) String fullName,
             @Parameter(description = "Номер телефона пользователя") @RequestParam(required = false) Long phone) {
-        if (userName != null && !userName.isBlank()) {
-            return ResponseEntity.ok(userDogService.findUserByUserName(userName));
+        if (userId != null) {
+            return ResponseEntity.ok(userDogService.findUserDogByUserId(userId));
         }
         if (fullName != null && !fullName.isBlank()) {
-            return ResponseEntity.ok(userDogService.findUserByFullName(fullName));
+            return ResponseEntity.ok(userDogService.findUserDogByFullName(fullName));
         }
         if (phone != null && phone > 0) {
-            return ResponseEntity.ok(userDogService.findUserByPhone(phone));
+            return ResponseEntity.ok(userDogService.findUserDogByPhone(phone));
         }
-        Collection<UserDog> foundUsers = userDogService.findAllUsers();
+        Collection<UserDog> foundUsers = userDogService.findAllUsersDog();
         if (foundUsers == null) {
             return ResponseEntity.ok(Collections.emptyList());
         } else {

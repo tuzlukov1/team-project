@@ -15,6 +15,10 @@ import pro.sky.teamproject.constant.CallBackDataEnum;
 import pro.sky.teamproject.constant.ConstantCatMessageEnum;
 import pro.sky.teamproject.constant.ConstantMessageEnum;
 import pro.sky.teamproject.entity.User;
+import pro.sky.teamproject.entity.UserCat;
+import pro.sky.teamproject.entity.UserDog;
+import pro.sky.teamproject.services.UserCatService;
+import pro.sky.teamproject.services.UserDogService;
 import pro.sky.teamproject.services.UserService;
 
 import java.util.ArrayList;
@@ -26,14 +30,18 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
 
     private final TelegramBotConfiguration configuration;
     private final UserService userService;
+    private final UserDogService userDogService;
+    private final UserCatService userCatService;
     Boolean startRegistration = false;
     Boolean startCatRegistration = false;
 
     private final Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
 
-    public TelegramBotUpdatesListener(TelegramBotConfiguration configuration, UserService userService) {
+    public TelegramBotUpdatesListener(TelegramBotConfiguration configuration, UserService userService, UserDogService userDogService, UserCatService userCatService) {
         this.configuration = configuration;
         this.userService = userService;
+        this.userDogService = userDogService;
+        this.userCatService = userCatService;
     }
 
     @Override
@@ -68,21 +76,34 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
             } else if (messageText.matches("[А-Я][а-я]+\\s[А-Я][а-я]+") && (startRegistration || startCatRegistration)) {
                 logger.info("пользователь ввел свое имя");
                 user = userService.findUserByChatId(chatId).get();
-                user.setFullName(messageText);
-                userService.updateUser(user);
+                if(!userDogService.findUserDogByUserId(user.getId()).isEmpty()) {
+                   UserDog userDog = userDogService.findUserDogByUserId(user.getId()).stream().findFirst().get();
+                   userDog.setFullName(messageText);
+                   userDogService.updateUserDog(userDog);
+                } else {
+                    UserCat userCat = userCatService.findUserCatByUserId(user.getId()).stream().findFirst().get();
+                    userCat.setFullName(messageText);
+                    userCatService.updateUserCat(userCat);
+                }
                 String textMessage = "Введите свой номер телефона, только цифры, например '79000000000'";
                 sendMessageToUser(chatId, textMessage);
             } else if (messageText.matches("^\\d{5,15}$") && (startRegistration || startCatRegistration)) {
                 logger.info("пользователь ввел номер телефона");
                 Optional<User> userByChatId = userService.findUserByChatId(chatId);
                 if (userByChatId.isPresent()) {
-                    user = userByChatId.get();
-                    user.setPhone(Long.valueOf(messageText));
-                    userService.updateUser(user);
+                    if(!userDogService.findUserDogByUserId(user.getId()).isEmpty()) {
+                        UserDog userDog = userDogService.findUserDogByUserId(userByChatId.get().getId()).stream().findFirst().get();
+                        userDog.setPhone(Long.valueOf(messageText));
+                        userDogService.updateUserDog(userDog);
+                    } else {
+                        UserCat userCat = userCatService.findUserCatByUserId(userByChatId.get().getId()).stream().findFirst().get();
+                        userCat.setPhone(Long.valueOf(messageText));
+                        userCatService.updateUserCat(userCat);
+                    }
                     String textMessage = "Регистрация успешна!";
                     startRegistration = false;
                     sendMessageToUser(chatId, textMessage);
-                    dogMainMenuKeyboard(update);
+                    shelterMenuKeyboard(update);
                 }
             } else {
                 sendMessageToUser(chatId, "Некорректныый ввод, попробуйте снова");
@@ -99,10 +120,16 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
         String callBackData = update.getCallbackQuery().getData();
         if (callBackData.equals(CallBackDataEnum.CAT_SHELTER_BUTTON.getMessage())) {
             logger.info("пользователь нажал на кнопку приют для кошек");
+            UserCat userCat = new UserCat();
+            userCat.setUserId(userService.findUserByChatId(update.getCallbackQuery().getFrom().getId()).get().getId());
+            userCatService.updateUserCat(userCat);
             catMainMenuKeyboard(update);
         }
         if (callBackData.equals(CallBackDataEnum.DOG_SHELTER_BUTTON.getMessage())) {
             logger.info("пользователь нажал на кнопку приют для собак");
+            UserDog userDog = new UserDog();
+            userDog.setUserId(userService.findUserByChatId(update.getCallbackQuery().getFrom().getId()).get().getId());
+            userDogService.updateUserDog(userDog);
             dogMainMenuKeyboard(update);
         }
 
