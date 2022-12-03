@@ -35,15 +35,11 @@ class UserServiceTest {
         editUser.setId(id);
         editUser.setUserName(userName);
         editUser.setChatId(chatId);
-        editUser.setFullName(fullName);
-        editUser.setPhone(phone);
 
         User expected = new User();
         expected.setId(id);
         expected.setUserName(userName);
         expected.setChatId(chatId);
-        expected.setFullName(fullName);
-        expected.setPhone(phone);
 
         when(usersRepository.save(editUser))
                 .thenReturn(editUser);
@@ -63,15 +59,11 @@ class UserServiceTest {
         user.setId(id);
         user.setUserName(userName);
         user.setChatId(chatId);
-        user.setFullName(fullName);
-        user.setPhone(phone);
 
         User expected = new User();
         expected.setId(id);
         expected.setUserName(userName);
         expected.setChatId(chatId);
-        expected.setFullName(fullName);
-        expected.setPhone(phone);
 
         when(usersRepository.findUserByChatId(chatId))
                 .thenReturn(user);

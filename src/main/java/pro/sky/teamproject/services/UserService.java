@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import pro.sky.teamproject.entity.User;
 import pro.sky.teamproject.repository.UsersRepository;
 
-import java.util.Collection;
 import java.util.Optional;
 
 @Service

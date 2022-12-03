@@ -18,12 +18,6 @@ public class User {
     @Column(name = "chat_id")
     private Long chatId;
 
-    @Column(name = "full_name")
-    private String fullName;
-
-    @Column(name = "phone")
-    private Long phone;
-
     public User() {
 
     }
@@ -52,20 +46,17 @@ public class User {
         this.chatId = chatId;
     }
 
-    public String getFullName() {
-        return fullName;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id) && Objects.equals(userName, user.userName) && Objects.equals(chatId, user.chatId);
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public Long getPhone() {
-        return phone;
-    }
-
-    public void setPhone(Long phone) {
-        this.phone = phone;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, userName, chatId);
     }
 
     @Override
@@ -75,22 +66,5 @@ public class User {
                 ", userName='" + userName + '\'' +
                 ", chatId=" + chatId +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(userName, user.userName) && Objects.equals(chatId, user.chatId) && Objects.equals(fullName, user.fullName) && Objects.equals(phone, user.phone);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, userName, chatId, fullName, phone);
     }
 }

@@ -8,7 +8,6 @@ import pro.sky.teamproject.entity.UserDog;
 import pro.sky.teamproject.repository.UsersDogRepository;
 
 import java.util.Collection;
-import java.util.Optional;
 
 @Service
 public class UserDogService {
@@ -27,7 +26,7 @@ public class UserDogService {
      * @param id идентификатор пользователя, не может быть null
      * @return данные о пользователе в формате JSON
      */
-    public UserDog findUserById(Long id) {
+    public UserDog findUserDogById(Long id) {
         logger.debug("Was invoked method for get userDog info with id = {} ", id);
         UserDog userDog = usersDogRepository.findById(id).orElse(null);
         logger.warn("Response {} ", userDog);
@@ -40,7 +39,7 @@ public class UserDogService {
      * @param userDog данные о пользователе в формате JSON
      * @return измененная запись в базе данных в формате JSON
      */
-    public UserDog updateUser(UserDog userDog) {
+    public UserDog updateUserDog(UserDog userDog) {
         logger.debug("Was invoked method for edit userDog");
         return usersDogRepository.save(userDog);
     }
@@ -50,54 +49,42 @@ public class UserDogService {
      * Используется метод репозитория {@link JpaRepository#deleteById(Object)}
      * @param id идентификатор пользователя, не может быть null
      */
-    public void deleteUser(long id) {
+    public void deleteUserDog(long id) {
         logger.debug("Was invoked method for delete userDog");
         usersDogRepository.deleteById(id);
     }
 
     /**
-     * Поиск пользователя в БД по идентификатору чата.
-     * Исползуется метод репозитория {@link UsersDogRepository#findUserByChatId(Long)}
-     * @param id идентификатор чата пользователя, присваивается при регистрации
-     *           через телеграм бота, не может быть null
-     * @return данные о пользователе в формате JSON
-     */
-    public Optional<UserDog> findUserByChatId(Long id) {
-        logger.debug("Was invoked method for get userDog info with chatId = {} ", id);
-        return Optional.ofNullable(usersDogRepository.findUserByChatId(id));
-    }
-
-    /**
-     * Поиск пользователя в БД по UserName.
-     * Исползуется метод репозитория {@link UsersDogRepository#findUsersByUserNameIgnoreCase(String)}
-     * @param userName имя пользователя в мессенджере Telegram
-     * @return список пользователей в формате JSON
-     */
-    public Collection<UserDog> findUserByUserName(String userName) {
-        logger.debug("Was invoked method for get userDog info with user name");
-        return usersDogRepository.findUsersByUserNameIgnoreCase(userName);
-    }
-
-    /**
      * Поиск пользователя в БД по FullName.
-     * Исползуется метод репозитория {@link UsersDogRepository#findUsersByFullNameIgnoreCase(String)}
+     * Исползуется метод репозитория {@link UsersDogRepository#findUserDogByFullNameIgnoreCase(String)}
      * @param fullName имя введенное пользователем при регистрации через телеграм бота
      * @return список пользователей в формате JSON
      */
-    public Collection<UserDog> findUserByFullName(String fullName) {
+    public Collection<UserDog> findUserDogByFullName(String fullName) {
         logger.debug("Was invoked method for get userDog info with full name");
-        return usersDogRepository.findUsersByFullNameIgnoreCase(fullName);
+        return usersDogRepository.findUserDogByFullNameIgnoreCase(fullName);
     }
 
     /**
      * Поиск пользователя в БД по номеру телефона.
-     * Исползуется метод репозитория {@link UsersDogRepository#findUsersByPhone(Long)}
+     * Исползуется метод репозитория {@link UsersDogRepository#findUserDogByPhone(Long)}
      * @param phone номер телефона введенный пользователем при регистрации через телеграм бота
      * @return список пользователей в формате JSON
      */
-    public Collection<UserDog> findUserByPhone(Long phone) {
+    public Collection<UserDog> findUserDogByPhone(Long phone) {
         logger.debug("Was invoked method for get userDog info with phone number");
-        return usersDogRepository.findUsersByPhone(phone);
+        return usersDogRepository.findUserDogByPhone(phone);
+    }
+
+    /**
+     * Поиск пользователя в БД по айди юзера.
+     * Исползуется метод репозитория {@link UsersDogRepository#findUserDogByUserId(Long)}
+     * @param userId ид пользователя из таблицы users
+     * @return список пользователей в формате JSON
+     */
+    public Collection<UserDog> findUserDogByUserId(Long userId) {
+        logger.debug("Was invoked method for get userDog info with phone number");
+        return usersDogRepository.findUserDogByUserId(userId);
     }
 
     /**
@@ -105,7 +92,7 @@ public class UserDogService {
      * Используется метод репозитория {@link JpaRepository#findAll()}
      * @return список всех пользователей из БД, в фомате JSON
      */
-    public Collection<UserDog> findAllUsers() {
+    public Collection<UserDog> findAllUsersDog() {
         logger.debug("Was invoked method for find all");
         return usersDogRepository.findAll();
     }

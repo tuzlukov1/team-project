@@ -8,7 +8,6 @@ import pro.sky.teamproject.entity.UserCat;
 import pro.sky.teamproject.repository.UsersCatRepository;
 
 import java.util.Collection;
-import java.util.Optional;
 
 @Service
 public class UserCatService {
@@ -27,7 +26,7 @@ public class UserCatService {
      * @param id идентификатор пользователя, не может быть null
      * @return данные о пользователе в формате JSON
      */
-    public UserCat findUserById(Long id) {
+    public UserCat findUserCatById(Long id) {
         logger.debug("Was invoked method for get userDog info with id = {} ", id);
         UserCat userCat = usersCatRepository.findById(id).orElse(null);
         logger.warn("Response {} ", userCat);
@@ -40,7 +39,7 @@ public class UserCatService {
      * @param userCat данные о пользователе в формате JSON
      * @return измененная запись в базе данных в формате JSON
      */
-    public UserCat updateUser(UserCat userCat) {
+    public UserCat updateUserCat(UserCat userCat) {
         logger.debug("Was invoked method for edit userCat");
         return usersCatRepository.save(userCat);
     }
@@ -50,54 +49,42 @@ public class UserCatService {
      * Используется метод репозитория {@link JpaRepository#deleteById(Object)}
      * @param id идентификатор пользователя, не может быть null
      */
-    public void deleteUser(long id) {
+    public void deleteUserCat(long id) {
         logger.debug("Was invoked method for delete userCat");
         usersCatRepository.deleteById(id);
     }
 
     /**
-     * Поиск пользователя в БД по идентификатору чата.
-     * Исползуется метод репозитория {@link UsersCatRepository#findUserByChatId(Long)}
-     * @param id идентификатор чата пользователя, присваивается при регистрации
-     *           через телеграм бота, не может быть null
-     * @return данные о пользователе в формате JSON
-     */
-    public Optional<UserCat> findUserByChatId(Long id) {
-        logger.debug("Was invoked method for get userCat info with chatId = {} ", id);
-        return Optional.ofNullable(usersCatRepository.findUserByChatId(id));
-    }
-
-    /**
-     * Поиск пользователя в БД по UserName.
-     * Исползуется метод репозитория {@link UsersCatRepository#findUsersByUserNameIgnoreCase(String)}
-     * @param userName имя пользователя в мессенджере Telegram
-     * @return список пользователей в формате JSON
-     */
-    public Collection<UserCat> findUserByUserName(String userName) {
-        logger.debug("Was invoked method for get userCat info with user name");
-        return usersCatRepository.findUsersByUserNameIgnoreCase(userName);
-    }
-
-    /**
      * Поиск пользователя в БД по FullName.
-     * Исползуется метод репозитория {@link UsersCatRepository#findUsersByFullNameIgnoreCase(String)}
+     * Исползуется метод репозитория {@link UsersCatRepository#findUserCatByFullNameIgnoreCase(String)}
      * @param fullName имя введенное пользователем при регистрации через телеграм бота
      * @return список пользователей в формате JSON
      */
-    public Collection<UserCat> findUserByFullName(String fullName) {
+    public Collection<UserCat> findUserCatByFullName(String fullName) {
         logger.debug("Was invoked method for get userCat info with full name");
-        return usersCatRepository.findUsersByFullNameIgnoreCase(fullName);
+        return usersCatRepository.findUserCatByFullNameIgnoreCase(fullName);
     }
 
     /**
      * Поиск пользователя в БД по номеру телефона.
-     * Исползуется метод репозитория {@link UsersCatRepository#findUsersByPhone(Long)}
+     * Исползуется метод репозитория {@link UsersCatRepository#findUserCatByPhone(Long)}
      * @param phone номер телефона введенный пользователем при регистрации через телеграм бота
      * @return список пользователей в формате JSON
      */
-    public Collection<UserCat> findUserByPhone(Long phone) {
+    public Collection<UserCat> findUserCatByPhone(Long phone) {
         logger.debug("Was invoked method for get userCat info with phone number");
-        return usersCatRepository.findUsersByPhone(phone);
+        return usersCatRepository.findUserCatByPhone(phone);
+    }
+
+    /**
+     * Поиск пользователя в БД по айди юзера.
+     * Исползуется метод репозитория {@link UsersCatRepository#findUserCatByUserId(Long)}
+     * @param userId ид пользователя из таблицы users
+     * @return список пользователей в формате JSON
+     */
+    public Collection<UserCat> findUserCatByUserId(Long userId) {
+        logger.debug("Was invoked method for get userCat info with phone number");
+        return usersCatRepository.findUserCatByUserId(userId);
     }
 
     /**
@@ -105,7 +92,7 @@ public class UserCatService {
      * Используется метод репозитория {@link JpaRepository#findAll()}
      * @return список всех пользователей из БД, в фомате JSON
      */
-    public Collection<UserCat> findAllUsers() {
+    public Collection<UserCat> findAllUsersCat() {
         logger.debug("Was invoked method for find all");
         return usersCatRepository.findAll();
     }

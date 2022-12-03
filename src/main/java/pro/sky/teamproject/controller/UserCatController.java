@@ -43,7 +43,7 @@ public class UserCatController {
     @GetMapping("{id}")
     public ResponseEntity<UserCat> getUserInfo(@Parameter(description = "идентификатор пользователя в БД")
                                             @PathVariable long id) {
-        UserCat foundUser = userCatService.findUserById(id);
+        UserCat foundUser = userCatService.findUserCatById(id);
         if (foundUser == null) {
             return ResponseEntity.notFound().build();
         }
@@ -75,7 +75,7 @@ public class UserCatController {
     )
     @PutMapping
     public UserCat editUser(@RequestBody UserCat userCat) {
-        return userCatService.updateUser(userCat);
+        return userCatService.updateUserCat(userCat);
     }
 
     @Operation(
@@ -95,40 +95,13 @@ public class UserCatController {
     @DeleteMapping("{id}")
     public ResponseEntity<Void> deleteUser(@Parameter(description = "идентификатор пользователя в БД")
                                            @PathVariable long id) {
-        UserCat foundUser = userCatService.findUserById(id);
+        UserCat foundUser = userCatService.findUserCatById(id);
         if (foundUser == null) {
             return ResponseEntity.notFound().build();
         }
-        userCatService.deleteUser(id);
+        userCatService.deleteUserCat(id);
         return ResponseEntity.ok().build();
     }
-
-    @Operation(
-            summary = "Поиск пользователя по его идентификатору чата в БД. " +
-                    "chatId присваивается при регистрации пользователя через " +
-                    "телеграм бота",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Получены данные о пользователе",
-                            content = @Content(
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = UserCat.class)
-                            )
-                    )
-            },
-            tags = "Cat_Owners"
-    )
-    @GetMapping("{id}/chatId")
-    public ResponseEntity<Optional<UserCat>> getUserInfoByChatId(@Parameter(description = "идентификатор чата пользователя в БД")
-                                                              @PathVariable long id) {
-        Optional<UserCat> foundUser = userCatService.findUserByChatId(id);
-        if (foundUser.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(foundUser);
-    }
-
 
     @Operation(
             summary = "Поиск пользователей по имени из мессенджера Telegram, " +
@@ -149,19 +122,19 @@ public class UserCatController {
     )
     @GetMapping
     public ResponseEntity<Collection<UserCat>> findUser(
-            @Parameter(description = "Имя пользователя в мессенджере Telegram") @RequestParam(required = false) String userName,
+            @Parameter(description = "Имя пользователя в мессенджере Telegram") @RequestParam(required = false) Long userId,
             @Parameter(description = "Имя введеное пользователем при регистрации") @RequestParam(required = false) String fullName,
             @Parameter(description = "Номер телефона пользователя") @RequestParam(required = false) Long phone) {
-        if (userName != null && !userName.isBlank()) {
-            return ResponseEntity.ok(userCatService.findUserByUserName(userName));
+        if (userId != null) {
+            return ResponseEntity.ok(userCatService.findUserCatByUserId(userId));
         }
         if (fullName != null && !fullName.isBlank()) {
-            return ResponseEntity.ok(userCatService.findUserByFullName(fullName));
+            return ResponseEntity.ok(userCatService.findUserCatByFullName(fullName));
         }
         if (phone != null && phone > 0) {
-            return ResponseEntity.ok(userCatService.findUserByPhone(phone));
+            return ResponseEntity.ok(userCatService.findUserCatByPhone(phone));
         }
-        Collection<UserCat> foundUsers = userCatService.findAllUsers();
+        Collection<UserCat> foundUsers = userCatService.findAllUsersCat();
         if (foundUsers == null) {
             return ResponseEntity.ok(Collections.emptyList());
         } else {
