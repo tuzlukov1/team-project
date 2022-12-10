@@ -2,7 +2,6 @@ package pro.sky.teamproject.listener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -14,11 +13,11 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import pro.sky.teamproject.configuration.TelegramBotConfiguration;
 import pro.sky.teamproject.constant.CallBackDataEnum;
-import pro.sky.teamproject.constant.ConstantCatMessageEnum;
 import pro.sky.teamproject.constant.ConstantMessageEnum;
 import pro.sky.teamproject.entity.User;
 import pro.sky.teamproject.entity.UserCat;
 import pro.sky.teamproject.entity.UserDog;
+import pro.sky.teamproject.repository.ButtonInterface;
 import pro.sky.teamproject.repository.UsersCatRepository;
 import pro.sky.teamproject.repository.UsersDogRepository;
 import pro.sky.teamproject.services.UserCatService;
@@ -26,12 +25,11 @@ import pro.sky.teamproject.services.UserDogService;
 import pro.sky.teamproject.services.UserService;
 
 import java.util.ArrayList;
-
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
+public class TelegramBotUpdatesListener extends TelegramLongPollingBot implements ButtonInterface {
 
     private final TelegramBotConfiguration configuration;
     private final UserService userService;
@@ -39,6 +37,7 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
     private final UserCatService userCatService;
     private final UsersCatRepository usersCatRepository;
     private final UsersDogRepository usersDogRepository;
+
     Boolean startRegistration = false;
     Boolean startCatRegistration = false;
 
@@ -66,7 +65,6 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
     }
 
 
-
     /**
      * Вывод напоминания о необходимости отправки отчета ежедневно в 10 утра,
      * для тех, кто забывает его отправлять
@@ -92,7 +90,7 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
             //Здесь нужно внести проверку со столбиком просроченных дней
             // в ownerShipDog и если просрочил, то отправлять сообщение
             if (warningMessage.equals("tt")) {
-                sendMessageToUser(chatId,warningMessage);
+                sendMessageToUser(chatId, warningMessage);
                 logger.info("пользователю с ID {} было отправлено уведомление " +
                         "о необходимости своевременной отправки отчета", chatId);
                 //Добавить счетчик в БД ownerShipDog и если он превысит 2 дня, то на пользователе будет доп запись,
@@ -101,14 +99,14 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
             //Здесь нужно внести проверку со столбиком количества дней оставшихся у усыновителя
             // в ownerShipDog и если они кончились и волонтер одобрил на завершение, то отправлять сообщение
             if (greetingMessage.equals("rr")) {
-                sendMessageToUser(chatId,greetingMessage);
+                sendMessageToUser(chatId, greetingMessage);
                 logger.info("Пользователь с ID {} было отправлено уведомление " +
                         "о прохождении испытательного срока", chatId);
             }
             //Здесь нужно внести проверку со столбиком количества дней оставшихся у усыновителя
             // в ownerShipDog и если они кончились и волонтер не одобрил на завершение, то отправлять сообщение
             if (sadMessage.equals("qq")) {
-                sendMessageToUser(chatId,sadMessage);
+                sendMessageToUser(chatId, sadMessage);
                 logger.info("Пользователь с ID {} было отправлено уведомление " +
                         "о провале испытательного срока", chatId);
             }
@@ -116,7 +114,7 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
             // в ownerShipDog и если они кончились и волонтер их продлил, то отправлять сообщение с указанием
             // количеством доп дней(лучше создать доп таблицу с булевой переменной продлил/не продлил)
             if (extraTimeMessage.equals("yy")) {
-                sendMessageToUser(chatId,extraTimeMessage + 14);
+                sendMessageToUser(chatId, extraTimeMessage + 14);
                 logger.info("Пользователь с ID {} было отправлено уведомление " +
                         "о продлении испытательно срока", chatId);
             }
@@ -130,40 +128,26 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
             long chatId = userCat.getId();
 
             if (warningMessage.equals("tt")) {
-                sendMessageToUser(chatId,warningMessage);
+                sendMessageToUser(chatId, warningMessage);
                 logger.info("пользователю с ID {} было отправлено уведомление " +
                         "о необходимости своевременной отправки отчета", chatId);
             }
             if (greetingMessage.equals("rr")) {
-                sendMessageToUser(chatId,greetingMessage);
+                sendMessageToUser(chatId, greetingMessage);
                 logger.info("Пользователь с ID {} было отправлено уведомление " +
                         "о прохождении испытательного срока", chatId);
             }
             if (sadMessage.equals("qq")) {
-                sendMessageToUser(chatId,sadMessage);
+                sendMessageToUser(chatId, sadMessage);
                 logger.info("Пользователь с ID {} было отправлено уведомление " +
                         "о провале испытательного срока", chatId);
             }
             if (extraTimeMessage.equals("yy")) {
-                sendMessageToUser(chatId,extraTimeMessage + 14);
+                sendMessageToUser(chatId, extraTimeMessage + 14);
                 logger.info("Пользователь с ID {} было отправлено уведомление " +
                         "о продлении испытательно срока", chatId);
             }
         });
-    }
-
-    /**
-     * Вывод с проверкой раз в тридцать минут сообщения, прошел ли усыновитель испытательны срок или нет и не продлили
-     * ли ему испытательный срок
-     */
-    @Scheduled(cron = "0 0/30 * * * *")
-    public void sendUserCatDogStatus() {
-        String greetingMessage = "Поздравляем, вы прошли испытательный срок!";
-        String sadMessage = "К сожалению, вы не прошли спытательный срок." +
-                "\nВ ближайшие сутки подготовьте животное для транспартировки " +
-                "\nС вами дополнительно свяжется волонтер для назначения времени привоза животного";
-        String extraTimeMessage = "Вам назначено дополнительный испытательный срок." +
-                "\nОн составляет - ";
     }
 
     @Override
@@ -188,10 +172,10 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
             } else if (messageText.matches("[А-Я][а-я]+\\s[А-Я][а-я]+") && (startRegistration || startCatRegistration)) {
                 logger.info("пользователь ввел свое имя");
                 user = userService.findUserByChatId(chatId).get();
-                if(!userDogService.findUserDogByUserId(user.getId()).isEmpty()) {
-                   UserDog userDog = userDogService.findUserDogByUserId(user.getId()).stream().findFirst().get();
-                   userDog.setFullName(messageText);
-                   userDogService.updateUserDog(userDog);
+                if (!userDogService.findUserDogByUserId(user.getId()).isEmpty()) {
+                    UserDog userDog = userDogService.findUserDogByUserId(user.getId()).stream().findFirst().get();
+                    userDog.setFullName(messageText);
+                    userDogService.updateUserDog(userDog);
                 } else {
                     UserCat userCat = userCatService.findUserCatByUserId(user.getId()).stream().findFirst().get();
                     userCat.setFullName(messageText);
@@ -203,7 +187,7 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
                 logger.info("пользователь ввел номер телефона");
                 Optional<User> userByChatId = userService.findUserByChatId(chatId);
                 if (userByChatId.isPresent()) {
-                    if(!userDogService.findUserDogByUserId(user.getId()).isEmpty()) {
+                    if (!userDogService.findUserDogByUserId(user.getId()).isEmpty()) {
                         UserDog userDog = userDogService.findUserDogByUserId(userByChatId.get().getId()).stream().findFirst().get();
                         userDog.setPhone(Long.valueOf(messageText));
                         userDogService.updateUserDog(userDog);
@@ -230,6 +214,7 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
      */
     private void checkCallBackQuery(Update update) {
         String callBackData = update.getCallbackQuery().getData();
+
         if (callBackData.equals(CallBackDataEnum.CAT_SHELTER_BUTTON.getMessage())) {
             logger.info("пользователь нажал на кнопку приют для кошек");
             UserCat userCat = new UserCat();
@@ -427,240 +412,6 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
     }
 
     /**
-     * Вывод информации о собачьем приюте
-     */
-    private void sendShelterInformation(Update update) {
-        String informationMessage = ConstantMessageEnum.SHELTER_INFORMATION.getMessage();
-        infoWithBackButtonToInformationMenu(update, informationMessage);
-    }
-
-    /**
-     * Вывод информации о кошачьем приюте
-     */
-    private void sendCatShelterInformation(Update update) {
-        String informationMessage = ConstantCatMessageEnum.SHELTER_CAT_INFORMATION.getMessage();
-        infoWithBackButtonToInformationCatMenu(update, informationMessage);
-    }
-
-    /**
-     * Вывод информации о времени работы и адресе собчачьего приюта
-     */
-    private void sendShelterOpeningHoursAndAddress(Update update) {
-        String openingHoursMessage = ConstantMessageEnum.SHELTER_OPENING_HOURS.getMessage();
-        String addressMessage = ConstantMessageEnum.SHELTER_ADDRESS.getMessage();
-        infoWithBackButtonToInformationMenu(update, openingHoursMessage + addressMessage);
-    }
-
-    /**
-     * Вывод информации о времени работы и адресе кошачьего приюта
-     */
-    private void sendCatShelterOpeningHoursAndAddress(Update update) {
-        String openingHoursMessage = ConstantCatMessageEnum.SHELTER_CAT_OPENING_HOURS.getMessage();
-        String addressMessage = ConstantCatMessageEnum.SHELTER_CAT_ADDRESS.getMessage();
-        infoWithBackButtonToInformationCatMenu(update, openingHoursMessage + addressMessage);
-    }
-
-    /**
-     * Вывод информации о контактных данных охраны для собачьего приюта
-     */
-    private void sendDogShelterSecurityNumber(Update update) {
-        String securityNumber = ConstantMessageEnum.SHElTER_DOG_SECURITY_NUMBER.getMessage();
-        infoWithBackButtonToInformationMenu(update,securityNumber);
-    }
-
-    /**
-     * Вывод информации о контактных данных охраны для кошачьего приюта
-     */
-    private void sendCatShelterSecurityNumber(Update update) {
-        String securityNumber = ConstantCatMessageEnum.SHElTER_CAT_SECURITY_NUMBER.getMessage();
-        infoWithBackButtonToInformationCatMenu(update,securityNumber);
-    }
-
-    /**
-     * Вывод информации о правилах безопасности собачьего приюта
-     */
-    private void sendShelterSafetyRegulations(Update update) {
-        String safetyRegulationsMessage = ConstantMessageEnum.SHELTER_SAFETY_REGULATIONS.getMessage();
-        infoWithBackButtonToInformationMenu(update, safetyRegulationsMessage);
-    }
-
-    /**
-     * Вывод информации о правилах безопасности кошачьего приюта
-     */
-    private void sendCatShelterSafetyRegulations(Update update) {
-        String safetyRegulationsMessage = ConstantCatMessageEnum.SHELTER_CAT_SAFETY_REGULATIONS.getMessage();
-        infoWithBackButtonToInformationCatMenu(update, safetyRegulationsMessage);
-    }
-
-
-    /**
-     * Вывод информации о правилах знакомства с собакой
-     */
-    private void sendDogAcquaintanceRules(Update update) {
-        String informationMessage = ConstantMessageEnum.DOG_ACQUAINTANCE_RULES.getMessage();
-        infoWithBackButtonToTakeTheDogMenu(update, informationMessage);
-    }
-
-    /**
-     * Вывод информации о правилах знакомства с кошкой
-     */
-    private void sendCatAcquaintanceRules(Update update) {
-        String informationMessage = ConstantCatMessageEnum.CAT_ACQUAINTANCE_RULES.getMessage();
-        infoWithBackButtonToTakeTheCatMenu(update, informationMessage);
-    }
-
-    /**
-     * Вывод списка документов, необходимых для того, чтобы взять собаку из приюта
-     */
-    private void sendDocumentsForDogs(Update update) {
-        String informationMessage = ConstantMessageEnum.DOCUMENTS_FOR_DOGS.getMessage();
-        infoWithBackButtonToTakeTheDogMenu(update, informationMessage);
-    }
-
-    /**
-     * Вывод списка документов, необходимых для того, чтобы взять кошку из приюта
-     */
-    private void sendDocumentsForCats(Update update) {
-        String informationMessage = ConstantCatMessageEnum.DOCUMENTS_FOR_CATS.getMessage();
-        infoWithBackButtonToTakeTheCatMenu(update, informationMessage);
-    }
-
-    /**
-     * Вывод списка рекомендаций по транспортировке собаки
-     */
-    private void sendTransportationAdvice(Update update) {
-        String informationMessage = ConstantMessageEnum.TRANSPORTATION_ADVICE.getMessage();
-        infoWithBackButtonToTakeTheDogMenu(update, informationMessage);
-    }
-
-    /**
-     * Вывод списка рекомендаций по транспортировке кошки
-     */
-    private void sendCatTransportationAdvice(Update update) {
-        String informationMessage = ConstantCatMessageEnum.TRANSPORTATION_CAT_ADVICE.getMessage();
-        infoWithBackButtonToTakeTheCatMenu(update, informationMessage);
-    }
-
-    /**
-     * Вывод списка рекомендаций по обустройству дома для щенка
-     */
-    private void sendHomeImprovementForPuppy(Update update) {
-        String informationMessage = ConstantMessageEnum.HOME_IMPROVEMENT_FOR_PUPPY.getMessage();
-        infoWithBackButtonToTakeTheDogMenu(update, informationMessage);
-    }
-
-    /**
-     * Вывод списка рекомендаций по обустройству дома для котенка
-     */
-    private void sendHomeImprovementForKitty(Update update) {
-        String informationMessage = ConstantCatMessageEnum.HOME_IMPROVEMENT_FOR_KITTY.getMessage();
-        infoWithBackButtonToTakeTheCatMenu(update, informationMessage);
-    }
-
-
-    /**
-     * Вывод списка рекомендаций по обустройству дома для взрослой собаки
-     */
-    private void sendHomeImprovementForAdultDog(Update update) {
-        String informationMessage = ConstantMessageEnum.HOME_IMPROVEMENT_FOR_AN_ADULT_DOG.getMessage();
-        infoWithBackButtonToTakeTheDogMenu(update, informationMessage);
-    }
-
-    /**
-     * Вывод списка рекомендаций по обустройству дома для взрослой кошки
-     */
-    private void sendHomeImprovementForAdultCat(Update update) {
-        String informationMessage = ConstantCatMessageEnum.HOME_IMPROVEMENT_FOR_AN_ADULT_CAT.getMessage();
-        infoWithBackButtonToTakeTheCatMenu(update, informationMessage);
-    }
-
-
-    /**
-     * Вывод списка рекомендаций по обустройству дома для собаки с ограниченными возможностями
-     */
-    private void sendHomeImprovementForDogsWithSpecialNeeds(Update update) {
-        String informationMessage = ConstantMessageEnum.HOME_IMPROVEMENT_FOR_DOG_WITH_SPECIAL_NEEDS.getMessage();
-        infoWithBackButtonToTakeTheDogMenu(update, informationMessage);
-    }
-
-    /**
-     * Вывод списка рекомендаций по обустройству дома для кошки с ограниченными возможностями
-     */
-    private void sendHomeImprovementForCatsWithSpecialNeeds(Update update) {
-        String informationMessage = ConstantCatMessageEnum.HOME_IMPROVEMENT_FOR_CAT_WITH_SPECIAL_NEEDS.getMessage();
-        infoWithBackButtonToTakeTheCatMenu(update, informationMessage);
-    }
-
-
-    /**
-     * Вывод советов кинолога по первичному общению с собакой
-     */
-    private void sendCynologistsAdviceOnInitialCommunication(Update update) {
-        String informationMessage = ConstantMessageEnum.CYNOLOGISTS_ADVICE_ON_INITIAL_COMMUNICATION.getMessage();
-        infoWithBackButtonToTakeTheDogMenu(update, informationMessage);
-    }
-
-    /**
-     * Вывод рекомендаций по проверенным кинологам для дальнейшего обращения к ним
-     */
-    private void sendRecommendationsForProvenCynologists(Update update) {
-        String informationMessage = ConstantMessageEnum.RECOMMENDATIONS_FOR_PROVEN_CYNOLOGISTS.getMessage();
-        infoWithBackButtonToTakeTheDogMenu(update, informationMessage);
-    }
-
-    /**
-     * Запись контактных данных для связи
-     */
-    private void registrationUserDog(Update update) {
-        String informationMessage = ConstantMessageEnum.CANDIDATE_REGISTRATION.getMessage();
-        startRegistration = true;
-        infoWithBackButtonToInformationMenu(update, informationMessage);
-    }
-
-    /**
-     * Запись контактных данных в кошачий приют для связи
-     */
-    private void registrationUserCat(Update update) {
-        String informationMessage = ConstantCatMessageEnum.CANDIDATE_CAT_REGISTRATION.getMessage();
-        startCatRegistration = true;
-        infoWithBackButtonToInformationCatMenu(update, informationMessage);
-    }
-
-    /**
-     * Вывод информации почему могут отказать и не дать забрать собаку из приюта
-     */
-    private void sendReasonForRefusal(Update update) {
-        String informationMessage = ConstantMessageEnum.REASON_FOR_REFUSAL.getMessage();
-        infoWithBackButtonToTakeTheDogMenu(update, informationMessage);
-    }
-
-    /**
-     * Вывод информации почему могут отказать и не дать забрать кошку из приюта
-     */
-    private void sendCatReasonForRefusal(Update update) {
-        String informationMessage = ConstantCatMessageEnum.REASON_CAT_FOR_REFUSAL.getMessage();
-        infoWithBackButtonToTakeTheCatMenu(update, informationMessage);
-    }
-
-    /**
-     * Вывод информации по отправке отчета в собачий приют
-     */
-    private void sendDogReport(Update update) {
-        String informationMessage = ConstantMessageEnum.DOG_REPORT.getMessage();
-        infoWithBackButtonToDogMainMenu(update, informationMessage);
-    }
-
-    /**
-     * Вывод информации по отправке отчета в кошачий приют
-     */
-    private void sendCatReport(Update update) {
-        String informationMessage = ConstantCatMessageEnum.CAT_REPORT.getMessage();
-        infoWithBackButtonToCatMainMenu(update, informationMessage);
-    }
-
-
-
-    /**
      * Вывод приветственного сообщения по команде /start
      */
     private void sendGreetings(long chatId, String name) {
@@ -708,7 +459,7 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
     /**
      * Обработка TelegramApiException при отправке сообщений
      */
-    private void executeMessage(SendMessage message) {
+    public void executeMessage(SendMessage message) {
         try {
             execute(message);
         } catch (TelegramApiException e) {
@@ -719,7 +470,7 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
     /**
      * Обработка TelegramApiException при отправке измененных сообщений
      */
-    private void executeEditMessage(EditMessageText message) {
+    public void executeEditMessage(EditMessageText message) {
         try {
             execute(message);
         } catch (TelegramApiException e) {
@@ -730,7 +481,7 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
     /**
      * Вывод меню с выбором приюта
      */
-    private void shelterMenuKeyboard(Update update) {
+    public void shelterMenuKeyboard(Update update) {
         EditMessageText editMessage = new EditMessageText();
         SendMessage message = new SendMessage();
         if (update.hasCallbackQuery()) {
@@ -778,7 +529,7 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
     /**
      * Вывод главного меню для кошек с вопросами под сообщением после выбора приюта
      */
-    private void catMainMenuKeyboard(Update update) {
+    public void catMainMenuKeyboard(Update update) {
         EditMessageText editMessage = new EditMessageText();
         SendMessage message = new SendMessage();
         if (update.hasCallbackQuery()) {
@@ -846,7 +597,7 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
     /**
      * Вывод главного меню для собак с вопросами под сообщением после выбора приюта
      */
-    private void dogMainMenuKeyboard(Update update) {
+    public void dogMainMenuKeyboard(Update update) {
         EditMessageText editMessage = new EditMessageText();
         SendMessage message = new SendMessage();
         if (update.hasCallbackQuery()) {
@@ -914,7 +665,7 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
     /**
      * Вывод меню с вопросами под сообщением после нажатия кнопки меню "Информация о приюте"
      */
-    private void dogInformationMenuKeyboard(Update update) {
+    public void dogInformationMenuKeyboard(Update update) {
         long messageId = update.getCallbackQuery().getMessage().getMessageId();
         long chatId = update.getCallbackQuery().getMessage().getChatId();
         EditMessageText message = new EditMessageText();
@@ -985,7 +736,7 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
     /**
      * Вывод меню кошчьего приюта с вопросами под сообщением после нажатия кнопки меню "Информация о приюте"
      */
-    private void catInformationMenuKeyboard(Update update) {
+    public void catInformationMenuKeyboard(Update update) {
         long messageId = update.getCallbackQuery().getMessage().getMessageId();
         long chatId = update.getCallbackQuery().getMessage().getChatId();
         EditMessageText message = new EditMessageText();
@@ -1057,7 +808,7 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
     /**
      * Вывод меню с вопросами под сообщением после нажатия кнопки меню "Как взять собаку из приюта"
      */
-    private void takeTheDogMenuKeyboard(Update update) {
+    public void takeTheDogMenuKeyboard(Update update) {
         long messageId = update.getCallbackQuery().getMessage().getMessageId();
         long chatId = update.getCallbackQuery().getMessage().getChatId();
         EditMessageText message = new EditMessageText();
@@ -1164,7 +915,7 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
     /**
      * Вывод меню с вопросами под сообщением после нажатия кнопки меню "Как взять кошку из приюта"
      */
-    private void takeTheCatMenuKeyboard(Update update) {
+    public void takeTheCatMenuKeyboard(Update update) {
         long messageId = update.getCallbackQuery().getMessage().getMessageId();
         long chatId = update.getCallbackQuery().getMessage().getChatId();
         EditMessageText message = new EditMessageText();
@@ -1256,7 +1007,7 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
     /**
      * Вывод кнопки назад в меню "Информация о приюте"(для собак)
      */
-    private void infoWithBackButtonToInformationMenu(Update update, String text) {
+    public void infoWithBackButtonToInformationMenu(Update update, String text) {
         long messageId = update.getCallbackQuery().getMessage().getMessageId();
         long chatId = update.getCallbackQuery().getMessage().getChatId();
         EditMessageText message = new EditMessageText();
@@ -1284,7 +1035,7 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
     /**
      * Вывод кнопки назад в меню "Информация о приюте"(для кошек)
      */
-    private void infoWithBackButtonToInformationCatMenu(Update update, String text) {
+    public void infoWithBackButtonToInformationCatMenu(Update update, String text) {
         long messageId = update.getCallbackQuery().getMessage().getMessageId();
         long chatId = update.getCallbackQuery().getMessage().getChatId();
         EditMessageText message = new EditMessageText();
@@ -1312,7 +1063,7 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
     /**
      * Вывод кнопки назад в меню "Как взять собаку из приюта"
      */
-    private void infoWithBackButtonToTakeTheDogMenu(Update update, String text) {
+    public void infoWithBackButtonToTakeTheDogMenu(Update update, String text) {
         long messageId = update.getCallbackQuery().getMessage().getMessageId();
         long chatId = update.getCallbackQuery().getMessage().getChatId();
         EditMessageText message = new EditMessageText();
@@ -1340,7 +1091,7 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
     /**
      * Вывод кнопки назад в меню "Как взять кошку из приюта"
      */
-    private void infoWithBackButtonToTakeTheCatMenu(Update update, String text) {
+    public void infoWithBackButtonToTakeTheCatMenu(Update update, String text) {
         long messageId = update.getCallbackQuery().getMessage().getMessageId();
         long chatId = update.getCallbackQuery().getMessage().getChatId();
         EditMessageText message = new EditMessageText();
@@ -1368,7 +1119,7 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
     /**
      * Вывод кнопки назад в меню c запросами в собачьем приюте
      */
-    private void infoWithBackButtonToDogMainMenu(Update update, String text) {
+    public void infoWithBackButtonToDogMainMenu(Update update, String text) {
         long messageId = update.getCallbackQuery().getMessage().getMessageId();
         long chatId = update.getCallbackQuery().getMessage().getChatId();
         EditMessageText message = new EditMessageText();
@@ -1392,7 +1143,6 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
         rowSecond.add(callVolunteerButton);
 
 
-
         DogMainMenuRows.add(rowFirst);
         DogMainMenuRows.add(rowSecond);
 
@@ -1402,7 +1152,7 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
         executeEditMessage(message);
     }
 
-    private void infoWithBackButtonToCatMainMenu(Update update, String text) {
+    public void infoWithBackButtonToCatMainMenu(Update update, String text) {
         long messageId = update.getCallbackQuery().getMessage().getMessageId();
         long chatId = update.getCallbackQuery().getMessage().getChatId();
         EditMessageText message = new EditMessageText();
@@ -1424,7 +1174,6 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
         callVolunteerButton.setText("Позвать волонтера");
         callVolunteerButton.setCallbackData(CallBackDataEnum.CALL_VOLUNTEER_BUTTON.getMessage());
         rowSecond.add(callVolunteerButton);
-
 
 
         CatMainMenuRows.add(rowFirst);
