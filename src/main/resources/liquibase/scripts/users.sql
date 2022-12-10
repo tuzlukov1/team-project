@@ -3,30 +3,30 @@
 -- changeset tuzlukov:15
 CREATE TABLE users
 (
-    id        SERIAL PRIMARY KEY,
+    id        BIGSERIAL PRIMARY KEY,
     user_name text,
     chat_id   BIGINT
 );
 
 CREATE TABLE users_dog
 (
-    id        SERIAL PRIMARY KEY,
-    user_id   SERIAL REFERENCES users (id),
+    id        BIGSERIAL PRIMARY KEY,
+    user_id   BIGSERIAL REFERENCES users (id),
     full_name TEXT,
     phone     BIGINT
 );
 
 CREATE TABLE users_cat
 (
-    id        SERIAL PRIMARY KEY,
-    user_id   SERIAL REFERENCES users (id),
+    id        BIGSERIAL PRIMARY KEY,
+    user_id   BIGSERIAL REFERENCES users (id),
     full_name TEXT,
     phone     BIGINT
 );
 
 CREATE TABLE animals_dog
 (
-    id    SERIAL PRIMARY KEY,
+    id    BIGSERIAL PRIMARY KEY,
     name  TEXT,
     breed TEXT,
     age   INTEGER
@@ -34,7 +34,7 @@ CREATE TABLE animals_dog
 
 CREATE TABLE animals_cat
 (
-    id    SERIAL PRIMARY KEY,
+    id    BIGSERIAL PRIMARY KEY,
     name  TEXT,
     breed TEXT,
     age   INTEGER
@@ -72,14 +72,34 @@ CREATE TABLE animal_avatars_connection_cats
 
 CREATE TABLE ownership_dogs
 (
-    id        SERIAL PRIMARY KEY,
-    owner_id  SERIAL REFERENCES users_dog (id),
-    animal_id SERIAL REFERENCES animals_dog (id)
+    id        BIGSERIAL PRIMARY KEY,
+    owner_id  BIGSERIAL REFERENCES users_dog (id),
+    animal_id BIGSERIAL REFERENCES animals_dog (id)
 );
 
 CREATE TABLE ownership_cats
 (
-    id        SERIAL PRIMARY KEY,
-    owner_id  SERIAL REFERENCES users_cat (id),
-    animal_id SERIAL REFERENCES animals_cat (id)
+    id                 BIGSERIAL PRIMARY KEY,
+    owner_id           BIGSERIAL REFERENCES users_cat (id),
+    animal_id          BIGSERIAL REFERENCES animals_cat (id)
 );
+
+-- changeSet shadrin:1
+ALTER TABLE ownership_cats
+    ADD COLUMN end_date_probation DATE;
+
+ALTER TABLE ownership_cats
+    ADD COLUMN probation_days INTEGER;
+
+ALTER TABLE ownership_cats
+    ADD COLUMN passage_probation TEXT DEFAULT 'не окончен';
+
+-- changeSet shadrin:2
+ALTER TABLE ownership_dogs
+    ADD COLUMN end_date_probation DATE;
+
+ALTER TABLE ownership_dogs
+    ADD COLUMN probation_days INTEGER;
+
+ALTER TABLE ownership_dogs
+    ADD COLUMN passage_probation TEXT DEFAULT 'не окончен';
