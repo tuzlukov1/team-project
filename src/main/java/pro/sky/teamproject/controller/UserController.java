@@ -43,7 +43,7 @@ public class UserController {
     )
     @GetMapping("{id}/chatId")
     public ResponseEntity<Optional<User>> getUserByChatId(@Parameter(description = "идентификатор чата пользователя в БД")
-                                                                 @PathVariable long id) {
+                                                          @PathVariable long id) {
         Optional<User> foundUser = userService.findUserByChatId(id);
         if (foundUser.isEmpty()) {
             return ResponseEntity.notFound().build();

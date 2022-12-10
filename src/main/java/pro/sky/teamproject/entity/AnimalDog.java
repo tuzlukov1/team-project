@@ -67,4 +67,14 @@ public class AnimalDog {
     public int hashCode() {
         return Objects.hash(id, name, breed, age);
     }
+
+    @Override
+    public String toString() {
+        return "AnimalDog{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", breed='" + breed + '\'' +
+                ", age=" + age +
+                '}';
+    }
 }
