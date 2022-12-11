@@ -1,32 +1,36 @@
 package pro.sky.teamproject.entity;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
-import java.util.Objects;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "users_cat")
-public class UserCat extends User{
+public class UserCat {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     private Long id;
 
+    @NotNull
+    @JoinColumn(name = "user_id", nullable = false)
+    private Long userId;
+
     @Column(name = "full_name")
+    @Type(type = "org.hibernate.type.TextType")
     private String fullName;
 
     @Column(name = "phone")
     private Long phone;
 
-    @Column(name = "user_id")
-    private Long userId;
-
-    public Long getId() {
-        return id;
+    public Long getPhone() {
+        return phone;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setPhone(Long phone) {
+        this.phone = phone;
     }
 
     public String getFullName() {
@@ -37,14 +41,6 @@ public class UserCat extends User{
         this.fullName = fullName;
     }
 
-    public Long getPhone() {
-        return phone;
-    }
-
-    public void setPhone(Long phone) {
-        this.phone = phone;
-    }
-
     public Long getUserId() {
         return userId;
     }
@@ -53,26 +49,11 @@ public class UserCat extends User{
         this.userId = userId;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        UserCat userCat = (UserCat) o;
-        return Objects.equals(id, userCat.id) && Objects.equals(fullName, userCat.fullName) && Objects.equals(phone, userCat.phone) && Objects.equals(userId, userCat.userId);
+    public Long getId() {
+        return id;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, fullName, phone, userId);
-    }
-
-    @Override
-    public String toString() {
-        return "UserCat{" +
-                "id=" + id +
-                ", fullName='" + fullName + '\'' +
-                ", phone=" + phone +
-                ", userId=" + userId +
-                '}';
+    public void setId(Long id) {
+        this.id = id;
     }
 }
