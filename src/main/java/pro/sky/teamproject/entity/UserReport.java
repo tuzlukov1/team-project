@@ -4,10 +4,11 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 
 @Entity
-@Table(name = "users_dog")
-public class UserDog {
+@Table(name = "users_reports")
+public class UserReport {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,27 +19,27 @@ public class UserDog {
     @JoinColumn(name = "user_id", nullable = false)
     private Long userId;
 
-    @Column(name = "full_name")
+    @Column(name = "report_date")
+    private LocalDate reportDate;
+
+    @Column(name = "report_text")
     @Type(type = "org.hibernate.type.TextType")
-    private String fullName;
+    private String reportText;
 
-    @Column(name = "phone")
-    private Long phone;
-
-    public Long getPhone() {
-        return phone;
+    public String getReportText() {
+        return reportText;
     }
 
-    public void setPhone(Long phone) {
-        this.phone = phone;
+    public void setReportText(String reportText) {
+        this.reportText = reportText;
     }
 
-    public String getFullName() {
-        return fullName;
+    public LocalDate getReportDate() {
+        return reportDate;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setReportDate(LocalDate reportDate) {
+        this.reportDate = reportDate;
     }
 
     public Long getUserId() {
