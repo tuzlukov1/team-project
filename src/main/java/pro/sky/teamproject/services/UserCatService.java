@@ -27,7 +27,7 @@ public class UserCatService {
      * @return данные о пользователе в формате JSON
      */
     public UserCat findUserCatById(Long id) {
-        logger.debug("Was invoked method for get userDog info with id = {} ", id);
+        logger.debug("Was invoked method for get userCat info with id = {} ", id);
         UserCat userCat = usersCatRepository.findById(id).orElse(null);
         logger.warn("Response {} ", userCat);
         return userCat;
@@ -77,13 +77,13 @@ public class UserCatService {
     }
 
     /**
-     * Поиск пользователя в БД по айди юзера.
+     * Поиск пользователя в БД по UserId.
      * Исползуется метод репозитория {@link UsersCatRepository#findUserCatByUserId(Long)}
-     * @param userId ид пользователя из таблицы users
+     * @param userId идентификатор пользователя из таблицы users
      * @return список пользователей в формате JSON
      */
     public Collection<UserCat> findUserCatByUserId(Long userId) {
-        logger.debug("Was invoked method for get userCat info with phone number");
+        logger.debug("Was invoked method for get userCat info with userId");
         return usersCatRepository.findUserCatByUserId(userId);
     }
 

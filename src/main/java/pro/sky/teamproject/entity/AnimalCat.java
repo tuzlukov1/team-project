@@ -1,7 +1,7 @@
 package pro.sky.teamproject.entity;
 
+import org.hibernate.annotations.Type;
 import javax.persistence.*;
-import java.util.Objects;
 
 @Entity
 @Table(name = "animals_cat")
@@ -9,30 +9,26 @@ public class AnimalCat {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @Column(name = "id", nullable = false)
+    private Long id;
 
+    @Column(name = "name")
+    @Type(type = "org.hibernate.type.TextType")
     private String name;
+
+    @Column(name = "breed")
+    @Type(type = "org.hibernate.type.TextType")
     private String breed;
-    private int age;
 
-    public AnimalCat() {
+    @Column(name = "age")
+    private Integer age;
 
+    public Integer getAge() {
+        return age;
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public void setAge(Integer age) {
+        this.age = age;
     }
 
     public String getBreed() {
@@ -43,29 +39,30 @@ public class AnimalCat {
         this.breed = breed;
     }
 
-    public int getAge() {
-        return age;
+    public String getName() {
+        return name;
     }
 
-    public void setAge(int age) {
-        this.age = age;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o){
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        AnimalCat animalCat = (AnimalCat) o;
-        return id == animalCat.id && age == animalCat.age && Objects.equals(name, animalCat.name) && Objects.equals(breed, animalCat.breed);
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(id, name, breed, age);
+    public String toString() {
+        return "AnimalCat{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", breed='" + breed + '\'' +
+                ", age=" + age +
+                '}';
     }
 }
 
