@@ -7,10 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pro.sky.teamproject.entity.User;
 import pro.sky.teamproject.services.UserService;
 
@@ -27,7 +24,7 @@ public class UserController {
 
     @Operation(
             summary = "Поиск пользователя по его идентификатору чата в БД. " +
-                    "chatId присваивается при регистрации пользователя через " +
+                    "\nchatId присваивается при регистрации пользователя через " +
                     "телеграм бота",
             responses = {
                     @ApiResponse(
@@ -49,5 +46,31 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(foundUser);
+    }
+
+    @Operation(
+            summary = "Отправка предупреждения о плохом качестве отчета" +
+                    "\nchatId присваивается при регистрации пользователя через " +
+                    "телеграм бота",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Пользователю было отправлено уведомление",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = User.class)
+                            )
+
+                    )
+            }, tags = "users"
+    )
+    @PutMapping("{id}/chatId")
+    public ResponseEntity<Optional<User>> postWarningMessageById(@Parameter(description = "идентификатор чата пользователя в БД")
+                                                                 @PathVariable long id) {
+        Optional<User> foundUser = userService.findUserByChatId(id);
+        if (foundUser.isEmpty()) {
+            ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(userService.setWarningStatus(id));
     }
 }

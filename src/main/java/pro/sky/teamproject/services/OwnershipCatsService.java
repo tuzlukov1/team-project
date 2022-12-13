@@ -2,12 +2,14 @@ package pro.sky.teamproject.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import pro.sky.teamproject.entity.AnimalCat;
 import pro.sky.teamproject.entity.OwnershipCats;
 import pro.sky.teamproject.entity.UserCat;
+import pro.sky.teamproject.listener.TelegramBotUpdatesListener;
 import pro.sky.teamproject.repository.OwnershipCatsRepository;
 
 import java.time.LocalDate;
@@ -27,12 +29,15 @@ public class OwnershipCatsService {
     private final UserCatService userCatService;
     private final CatService catService;
 
+    private final TelegramBotUpdatesListener telegramBotUpdatesListener;
+
     public OwnershipCatsService(OwnershipCatsRepository ownershipCatsRepository,
                                 UserCatService userCatService,
-                                CatService catService) {
+                                CatService catService,@Lazy TelegramBotUpdatesListener telegramBotUpdatesListener) {
         this.ownershipCatsRepository = ownershipCatsRepository;
         this.userCatService = userCatService;
         this.catService = catService;
+        this.telegramBotUpdatesListener = telegramBotUpdatesListener;
     }
 
     /**
@@ -119,9 +124,13 @@ public class OwnershipCatsService {
         if (ownershipCat == null) {
             return null;
         }
+        String probationText = "Дорогой усыновитель, ваш испытательный срок" +
+                "\nбыл продлен на " + probationDays + "дней";
         LocalDate endProbation = LocalDate.now().plusDays(probationDays);
         ownershipCat.setProbationDays(probationDays);
         ownershipCat.setEndDateProbation(endProbation);
+        telegramBotUpdatesListener.sendMessageToUser(id, probationText);
+        userCatService.findUserCatByUserId(id);
         return ownershipCatsRepository.save(ownershipCat);
     }
 
