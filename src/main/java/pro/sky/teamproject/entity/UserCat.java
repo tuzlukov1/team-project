@@ -5,7 +5,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "users_cat")
-public class UserCat extends User{
+public class UserCat {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)

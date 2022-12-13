@@ -698,11 +698,7 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
         message.setChatId(String.valueOf(chatId));
         message.setText(textMessage);
         message.setMessageId((int) messageId);
-        try {
-            execute(message);
-        } catch (TelegramApiException e) {
-            logger.error("Error occurred: " + e.getMessage());
-        }
+        executeEditMessage(message);
     }
 
     /**
