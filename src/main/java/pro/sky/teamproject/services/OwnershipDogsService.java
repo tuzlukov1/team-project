@@ -207,7 +207,7 @@ public class OwnershipDogsService {
      * Запуск метода происходит при помощи @Scheduled каждые 4 часа.
      */
     @Scheduled(cron = "0 0 0/4 * * *") // запуск метода каждые 4 часа после 00:00
-    public void updateProbationDays() {
+    public Collection<OwnershipDogs> updateProbationDays() {
         logger.info("Run updateProbationDays method on schedule every 4 hours");
 
         List<OwnershipDogs> ownershipDogs = ownershipDogsRepository.findAll();
@@ -224,5 +224,6 @@ public class OwnershipDogsService {
                 ownershipDogsRepository.save(ownershipDog);
             }
         });
+        return ownershipDogs;
     }
 }
