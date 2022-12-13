@@ -58,6 +58,7 @@ public class UserService {
     public Optional<User> setWarningStatus(Long chatId) {
         User user = usersRepository.findUserByChatId(chatId);
         user.setHaveWarning(true);
+        updateUser(user);
         return Optional.ofNullable(user);
     }
 }
