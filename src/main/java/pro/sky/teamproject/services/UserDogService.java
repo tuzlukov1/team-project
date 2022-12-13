@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
+import pro.sky.teamproject.entity.UserCat;
 import pro.sky.teamproject.entity.UserDog;
 import pro.sky.teamproject.repository.UsersDogRepository;
 
@@ -29,6 +30,13 @@ public class UserDogService {
     public UserDog findUserDogById(Long id) {
         logger.debug("Was invoked method for get userDog info with id = {} ", id);
         UserDog userDog = usersDogRepository.findById(id).orElse(null);
+        logger.warn("Response {} ", userDog);
+        return userDog;
+    }
+
+    public UserDog findUserDogByChatId(Long userId) {
+        logger.debug("Was invoked method for get userDog info with id = {} ", userId);
+        UserDog userDog = usersDogRepository.findUserDogByUserId(userId);
         logger.warn("Response {} ", userDog);
         return userDog;
     }
@@ -84,7 +92,7 @@ public class UserDogService {
      */
     public Collection<UserDog> findUserDogByUserId(Long userId) {
         logger.debug("Was invoked method for get userDog info with phone number");
-        return usersDogRepository.findUserDogByUserId(userId);
+        return (Collection<UserDog>) usersDogRepository.findUserDogByUserId(userId);
     }
 
     /**

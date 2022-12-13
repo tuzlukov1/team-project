@@ -14,8 +14,7 @@ public class UserDog {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @NotNull
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private Long userId;
 
     @Column(name = "full_name")

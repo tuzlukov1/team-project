@@ -122,7 +122,7 @@ public class UserCatController {
     )
     @GetMapping
     public ResponseEntity<Collection<UserCat>> findUser(
-            @Parameter(description = "Имя пользователя в мессенджере Telegram") @RequestParam(required = false) Long userId,
+            @Parameter(description = "ID пользователя в мессенджере Telegram") @RequestParam(required = false) Long userId,
             @Parameter(description = "Имя введеное пользователем при регистрации") @RequestParam(required = false) String fullName,
             @Parameter(description = "Номер телефона пользователя") @RequestParam(required = false) Long phone) {
         if (userId != null) {

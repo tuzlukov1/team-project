@@ -13,5 +13,5 @@ public interface UsersDogRepository extends JpaRepository<UserDog, Long> {
 
     List<UserDog> findUserDogByPhone(Long phone);
 
-    List<UserDog> findUserDogByUserId(Long id);
+    UserDog findUserDogByUserId(Long id);
 }

@@ -23,6 +23,19 @@ public class UserCatService {
     /**
      * Поиск пользователя в БД по идентификатору.
      * Исползуется метод репозитория {@link JpaRepository#findById(Object)}
+     * @param userId идентификатор пользователя, не может быть null
+     * @return данные о пользователе в формате JSON
+     */
+    public UserCat findUserCatByChatId(Long userId) {
+        logger.debug("Was invoked method for get userCat info with id = {} ", userId);
+        UserCat userCat = usersCatRepository.findUserCatByUserId(userId);
+        logger.warn("Response {} ", userCat);
+        return userCat;
+    }
+
+    /**
+     * Поиск пользователя в БД по идентификатору.
+     * Исползуется метод репозитория {@link JpaRepository#findById(Object)}
      * @param id идентификатор пользователя, не может быть null
      * @return данные о пользователе в формате JSON
      */
@@ -84,7 +97,7 @@ public class UserCatService {
      */
     public Collection<UserCat> findUserCatByUserId(Long userId) {
         logger.debug("Was invoked method for get userCat info with userId");
-        return usersCatRepository.findUserCatByUserId(userId);
+        return (Collection<UserCat>) usersCatRepository.findUserCatByUserId(userId);
     }
 
     /**

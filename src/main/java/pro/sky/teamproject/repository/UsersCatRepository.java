@@ -14,5 +14,5 @@ public interface UsersCatRepository extends JpaRepository<UserCat, Long> {
 
     List<UserCat> findUserCatByPhone(Long phone);
 
-    List<UserCat> findUserCatByUserId(Long id);
+    UserCat findUserCatByUserId(Long id);
 }

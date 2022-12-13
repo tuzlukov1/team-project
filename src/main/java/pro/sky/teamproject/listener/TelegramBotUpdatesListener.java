@@ -82,7 +82,7 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
      * для тех, кто прошел/не прошел испытательный срок
      * кому продлили испытательный срок
      */
-    @Scheduled(cron = "0 0 0/10 * * *")
+    @Scheduled(cron = "0 0 10 * * *")
     public void sendCatDogReport() {
 
         String greetingMessage = "Поздравляем, вы прошли испытательный срок!";
@@ -161,19 +161,26 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
         });
     }
 
-    /**
-     * Вывод с проверкой раз в тридцать минут сообщения, прошел ли усыновитель испытательны срок или нет и не продлили
-     * ли ему испытательный срок
-     */
-    @Scheduled(cron = "0 0/30 * * * *")
-    public void sendUserCatDogStatus() {
-        String greetingMessage = "Поздравляем, вы прошли испытательный срок!";
-        String sadMessage = "К сожалению, вы не прошли спытательный срок." +
-                "\nВ ближайшие сутки подготовьте животное для транспартировки " +
-                "\nС вами дополнительно свяжется волонтер для назначения времени привоза животного";
-        String extraTimeMessage = "Вам назначено дополнительный испытательный срок." +
-                "\nОн составляет - ";
-    }
+    public UserDog DogRegister(String messageText, UserDog userDog, Long chatId, Update update, User user) {
+        if (messageText.matches("[А-Я][а-я]+\\s[А-Я][а-я]+")) {
+            logger.info("пользователь ввел свое имя");
+            userDog.setFullName(messageText);
+            userDogService.updateUserDog(userDog);
+            String textMessage = "Введите свой номер телефона, только цифры, например '79000000000'";
+            sendMessageToUser(chatId, textMessage);
+        } else if (messageText.matches("^\\d{5,15}$")) {
+            logger.info("пользователь ввел номер телефона");
+            userDog.setPhone(Long.valueOf(messageText));
+            userDogService.updateUserDog(userDog);
+            String textMessage = "Регистрация успешна!";
+            user.setStartRegistration(false);
+            userService.updateUser(user);
+            sendMessageToUser(chatId, textMessage);
+            dogMainMenuKeyboard(update);
+        }
+        return userDog;
+}
+
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -186,8 +193,8 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
             String userName = update.getMessage().getChat().getUserName();
             Optional<User> optionalUser = userService.findUserByChatId(chatId);
             User user = optionalUser.isPresent() ? optionalUser.get() : new User();
-            UserDog userDog = optionalUser.isPresent() ? userDogService.findUserDogById(user.getId()) : new UserDog();
-            UserCat userCat = optionalUser.isPresent() ? userCatService.findUserCatById(user.getId()) : new UserCat();
+            UserDog userDog = optionalUser.isPresent() ? userDogService.findUserDogByChatId(user.getChatId()) : new UserDog();
+            UserCat userCat =  optionalUser.isPresent() ? userCatService.findUserCatById(user.getId()) : new UserCat();
 
             if ("/start".equals(messageText)) {
                 if (userService.findUserByChatId(chatId).isEmpty()) {
@@ -202,37 +209,41 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
                 sendMessageToUser(chatId, ConstantMessageEnum.BOT_INFORMATION.getMessage());
                 shelterMenuKeyboard(update);
             } else if (user.getStartRegistration()) {
-                if (messageText.matches("[А-Я][а-я]+\\s[А-Я][а-я]+")) {
-                    logger.info("пользователь ввел свое имя");
-                    if (userDog != null) {
-                        userDog.setFullName(messageText);
-                        userDogService.updateUserDog(userDog);
-                    } else {
-                        userCat.setFullName(messageText);
-                        userCatService.updateUserCat(userCat);
-                    }
-                    String textMessage = "Введите свой номер телефона, только цифры, например '79000000000'";
-                    sendMessageToUser(chatId, textMessage);
-                } else if (messageText.matches("^\\d{5,15}$")) {
-                    logger.info("пользователь ввел номер телефона");
-                    if (userDog != null) {
-                        userDog.setPhone(Long.valueOf(messageText));
-                        userDogService.updateUserDog(userDog);
-                        String textMessage = "Регистрация успешна!";
-                        user.setStartRegistration(false);
-                        userService.updateUser(user);
-                        sendMessageToUser(chatId, textMessage);
-                        dogMainMenuKeyboard(update);
-                    } else {
-                        userCat.setPhone(Long.valueOf(messageText));
-                        userCatService.updateUserCat(userCat);
-                        String textMessage = "Регистрация успешна!";
-                        user.setStartRegistration(false);
-                        userService.updateUser(user);
-                        sendMessageToUser(chatId, textMessage);
-                        catMainMenuKeyboard(update);
-                    }
-                }
+                DogRegister(messageText, userDog, chatId, update, user);
+//                if (messageText.matches("[А-Я][а-я]+\\s[А-Я][а-я]+")) {
+//                    logger.info("пользователь ввел свое имя");
+//                    if (userDog == null) {
+//                        userDog.setFullName(messageText);
+//                        userDogService.updateUserDog(userDog);
+//                    }
+//                    else {
+//                        userCat.setFullName(messageText);
+//                        userCat.setUserId(chatId);
+//                        userCatService.updateUserCat(userCat);
+//                    }
+//                    String textMessage = "Введите свой номер телефона, только цифры, например '79000000000'";
+//                    sendMessageToUser(chatId, textMessage);
+//                } else if (messageText.matches("^\\d{5,15}$")) {
+//                    logger.info("пользователь ввел номер телефона");
+//                    if (userDog != null) {
+//                        userDog.setPhone(Long.valueOf(messageText));
+//                        userDogService.updateUserDog(userDog);
+//                        String textMessage = "Регистрация успешна!";
+//                        user.setStartRegistration(false);
+//                        userService.updateUser(user);
+//                        sendMessageToUser(chatId, textMessage);
+//                        dogMainMenuKeyboard(update);
+//                    }
+//                    else {
+//                        userCat.setPhone(Long.valueOf(messageText));
+//                        userCatService.updateUserCat(userCat);
+//                        String textMessage = "Регистрация успешна!";
+//                        user.setStartRegistration(false);
+//                        userService.updateUser(user);
+//                        sendMessageToUser(chatId, textMessage);
+//                        catMainMenuKeyboard(update);
+//                    }
+//                }
             } else if (user.getStartReport()) {
                 Optional<String> captionText = Optional.ofNullable(update.getMessage().getCaption());
                 Optional<List<PhotoSize>> messageImg = Optional.ofNullable(update.getMessage().getPhoto());
@@ -339,23 +350,25 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
      */
     private void checkCallBackQuery(Update update) {
         String callBackData = update.getCallbackQuery().getData();
-        Long userId = userService.findUserByChatId(update.getCallbackQuery().getFrom().getId()).get().getId();
+        Long userId = update.getCallbackQuery().getMessage().getChatId();
+
         if (callBackData.equals(CallBackDataEnum.CAT_SHELTER_BUTTON.getMessage())) {
             logger.info("пользователь нажал на кнопку приют для кошек");
-            if (userDogService.findUserDogByUserId(userId).isEmpty() && userCatService.findUserCatByUserId(userId).isEmpty()) {
-                UserCat userCat = new UserCat();
-                userCat.setUserId(userId);
-                userCatService.updateUserCat(userCat);
-            }
+//            if (userCatService.findUserCatByUserId(userId).equals(null)) {
+//                UserCat userCat = new UserCat();
+//                userCat.setUserId(userId);
+//                userCatService.updateUserCat(userCat);
+//            }
             catMainMenuKeyboard(update);
         }
+
         if (callBackData.equals(CallBackDataEnum.DOG_SHELTER_BUTTON.getMessage())) {
-            logger.info("пользователь нажал на кнопку приют для собак");
-            if (userDogService.findUserDogByUserId(userId).isEmpty() && userCatService.findUserCatByUserId(userId).isEmpty()) {
-                UserDog userDog = new UserDog();
-                userDog.setUserId(userId);
-                userDogService.updateUserDog(userDog);
-            }
+//            logger.info("пользователь нажал на кнопку приют для собак");
+//            if (userDogService.findUserDogByUserId(userId).isEmpty()) {
+//                UserDog userDog = new UserDog();
+//                userDog.setUserId(userId);
+//                userDogService.updateUserDog(userDog);
+//            }
             dogMainMenuKeyboard(update);
         }
 

@@ -1,11 +1,12 @@
 -- liquibase formatted sql
 
+
 -- changeset tuzlukov:36
 CREATE TABLE users
 (
-    id                 BIGSERIAL PRIMARY KEY,
+    id                 BIGSERIAL,
     user_name          text,
-    chat_id            BIGINT,
+    chat_id            BIGINT PRIMARY KEY UNIQUE,
     start_registration BOOLEAN,
     start_report       BOOLEAN,
     have_warning       BOOLEAN
@@ -14,7 +15,7 @@ CREATE TABLE users
 CREATE TABLE users_dog
 (
     id        BIGSERIAL PRIMARY KEY,
-    user_id   BIGSERIAL REFERENCES users (id),
+    user_id   BIGINT REFERENCES users (chat_id),
     full_name TEXT,
     phone     BIGINT
 );
@@ -22,7 +23,7 @@ CREATE TABLE users_dog
 CREATE TABLE users_cat
 (
     id        BIGSERIAL PRIMARY KEY,
-    user_id   BIGSERIAL REFERENCES users (id),
+    user_id   BIGINT REFERENCES users (chat_id),
     full_name TEXT,
     phone     BIGINT
 );
@@ -60,7 +61,7 @@ CREATE TABLE ownership_cats
 CREATE TABLE users_reports
 (
     id          BIGSERIAL PRIMARY KEY,
-    user_id     BIGSERIAL REFERENCES users (id),
+    user_id     BIGINT REFERENCES users (chat_id),
     report_date DATE,
     report_text TEXT
 );
@@ -71,7 +72,7 @@ CREATE TABLE users_reports_photo
     report_photo_filepath   TEXT,
     report_photo_filesize   BIGINT,
     report_photo_media_type TEXT,
-    user_report_id          BIGSERIAL REFERENCES users_reports (id)
+    user_report_id          BIGINT REFERENCES users_reports (id)
 );
 
 -- changeSet shadrin:1
