@@ -8,6 +8,7 @@ import pro.sky.teamproject.entity.UserDog;
 import pro.sky.teamproject.repository.UsersDogRepository;
 
 import java.util.Collection;
+import java.util.List;
 
 @Service
 public class UserDogService {
@@ -60,7 +61,7 @@ public class UserDogService {
      * @param fullName имя введенное пользователем при регистрации через телеграм бота
      * @return список пользователей в формате JSON
      */
-    public Collection<UserDog> findUserDogByFullName(String fullName) {
+    public UserDog findUserDogByFullName(String fullName) {
         logger.debug("Was invoked method for get userDog info with full name");
         return usersDogRepository.findUserDogByFullNameIgnoreCase(fullName);
     }
@@ -71,7 +72,7 @@ public class UserDogService {
      * @param phone номер телефона введенный пользователем при регистрации через телеграм бота
      * @return список пользователей в формате JSON
      */
-    public Collection<UserDog> findUserDogByPhone(Long phone) {
+    public UserDog findUserDogByPhone(Long phone) {
         logger.debug("Was invoked method for get userDog info with phone number");
         return usersDogRepository.findUserDogByPhone(phone);
     }
@@ -82,7 +83,7 @@ public class UserDogService {
      * @param userId ид пользователя из таблицы users
      * @return список пользователей в формате JSON
      */
-    public Collection<UserDog> findUserDogByUserId(Long userId) {
+    public UserDog findUserDogByUserId(Long userId) {
         logger.debug("Was invoked method for get userDog info with phone number");
         return usersDogRepository.findUserDogByUserId(userId);
     }

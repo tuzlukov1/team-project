@@ -10,9 +10,9 @@ import java.util.List;
 @Repository
 public interface UsersCatRepository extends JpaRepository<UserCat, Long> {
 
-    List<UserCat> findUserCatByFullNameIgnoreCase(String name);
+    UserCat findUserCatByFullNameIgnoreCase(String name);
 
-    List<UserCat> findUserCatByPhone(Long phone);
+    UserCat findUserCatByPhone(Long phone);
 
-    List<UserCat> findUserCatByUserId(Long id);
+    UserCat findUserCatByUserId(Long id);
 }

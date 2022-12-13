@@ -121,7 +121,7 @@ public class UserDogController {
             tags = "Dog_Owners"
     )
     @GetMapping
-    public ResponseEntity<Collection<UserDog>> findUser(
+    public ResponseEntity<UserDog> findUser(
             @Parameter(description = "Id пользователя") @RequestParam(required = false) Long userId,
             @Parameter(description = "Имя введеное пользователем при регистрации") @RequestParam(required = false) String fullName,
             @Parameter(description = "Номер телефона пользователя") @RequestParam(required = false) Long phone) {
@@ -134,11 +134,12 @@ public class UserDogController {
         if (phone != null && phone > 0) {
             return ResponseEntity.ok(userDogService.findUserDogByPhone(phone));
         }
-        Collection<UserDog> foundUsers = userDogService.findAllUsersDog();
-        if (foundUsers == null) {
-            return ResponseEntity.ok(Collections.emptyList());
-        } else {
-            return ResponseEntity.ok(foundUsers);
-        }
+//        Collection<UserDog> foundUsers = userDogService.findAllUsersDog();
+//        if (foundUsers == null) {
+//            return ResponseEntity.ok(Collections.emptyList());
+//        } else {
+//            return ResponseEntity.ok(foundUsers);
+//        }
+        return ResponseEntity.notFound().build();
     }
 }

@@ -9,9 +9,9 @@ import java.util.List;
 @Repository
 public interface UsersDogRepository extends JpaRepository<UserDog, Long> {
 
-    List<UserDog> findUserDogByFullNameIgnoreCase(String name);
+    UserDog findUserDogByFullNameIgnoreCase(String name);
 
-    List<UserDog> findUserDogByPhone(Long phone);
+    UserDog findUserDogByPhone(Long phone);
 
-    List<UserDog> findUserDogByUserId(Long id);
+    UserDog findUserDogByUserId(Long id);
 }

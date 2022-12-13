@@ -8,6 +8,7 @@ import pro.sky.teamproject.entity.UserCat;
 import pro.sky.teamproject.repository.UsersCatRepository;
 
 import java.util.Collection;
+import java.util.List;
 
 @Service
 public class UserCatService {
@@ -60,7 +61,7 @@ public class UserCatService {
      * @param fullName имя введенное пользователем при регистрации через телеграм бота
      * @return список пользователей в формате JSON
      */
-    public Collection<UserCat> findUserCatByFullName(String fullName) {
+    public UserCat findUserCatByFullName(String fullName) {
         logger.debug("Was invoked method for get userCat info with full name");
         return usersCatRepository.findUserCatByFullNameIgnoreCase(fullName);
     }
@@ -71,7 +72,7 @@ public class UserCatService {
      * @param phone номер телефона введенный пользователем при регистрации через телеграм бота
      * @return список пользователей в формате JSON
      */
-    public Collection<UserCat> findUserCatByPhone(Long phone) {
+    public UserCat findUserCatByPhone(Long phone) {
         logger.debug("Was invoked method for get userCat info with phone number");
         return usersCatRepository.findUserCatByPhone(phone);
     }
@@ -82,7 +83,7 @@ public class UserCatService {
      * @param userId идентификатор пользователя из таблицы users
      * @return список пользователей в формате JSON
      */
-    public Collection<UserCat> findUserCatByUserId(Long userId) {
+    public UserCat findUserCatByUserId(Long userId) {
         logger.debug("Was invoked method for get userCat info with userId");
         return usersCatRepository.findUserCatByUserId(userId);
     }

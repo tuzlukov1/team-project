@@ -152,15 +152,15 @@ class UserCatControllerTest {
         user.setPhone(phone);
 
         when(usersCatRepository.findUserCatByFullNameIgnoreCase(any(String.class)))
-                .thenReturn(Collections.singletonList(user));
+                .thenReturn(user);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/userCat?fullName=" + fullName)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(id))
-                .andExpect(jsonPath("$[0].fullName").value(fullName))
-                .andExpect(jsonPath("$[0].phone").value(phone));
+                .andExpect(jsonPath("$.id").value(id))
+                .andExpect(jsonPath("$.fullName").value(fullName))
+                .andExpect(jsonPath("$.phone").value(phone));
     }
 
     @Test
@@ -175,15 +175,15 @@ class UserCatControllerTest {
         user.setPhone(phone);
 
         when(usersCatRepository.findUserCatByFullNameIgnoreCase(any(String.class)))
-                .thenReturn(Collections.singletonList(user));
+                .thenReturn(user);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/userCat?fullName=" + fullName)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(id))
-                .andExpect(jsonPath("$[0].fullName").value(fullName))
-                .andExpect(jsonPath("$[0].phone").value(phone));
+                .andExpect(jsonPath("$.id").value(id))
+                .andExpect(jsonPath("$.fullName").value(fullName))
+                .andExpect(jsonPath("$.phone").value(phone));
     }
 
     @Test
@@ -198,15 +198,15 @@ class UserCatControllerTest {
         user.setPhone(phone);
 
         when(usersCatRepository.findUserCatByPhone(any(Long.class)))
-                .thenReturn(Collections.singletonList(user));
+                .thenReturn(user);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/userCat?phone=" + phone)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(id))
-                .andExpect(jsonPath("$[0].fullName").value(fullName))
-                .andExpect(jsonPath("$[0].phone").value(phone));
+                .andExpect(jsonPath("$.id").value(id))
+                .andExpect(jsonPath("$.fullName").value(fullName))
+                .andExpect(jsonPath("$.phone").value(phone));
     }
 
     @Test
@@ -227,9 +227,9 @@ class UserCatControllerTest {
                         .get("/userCat")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(id))
-                .andExpect(jsonPath("$[0].fullName").value(fullName))
-                .andExpect(jsonPath("$[0].phone").value(phone));
+                .andExpect(jsonPath("$.id").value(id))
+                .andExpect(jsonPath("$.fullName").value(fullName))
+                .andExpect(jsonPath("$.phone").value(phone));
     }
 
     @Test

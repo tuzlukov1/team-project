@@ -161,8 +161,8 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
             String userName = update.getMessage().getChat().getUserName();
             Optional<User> optionalUser = userService.findUserByChatId(chatId);
             User user = optionalUser.isPresent() ? optionalUser.get() : new User();
-            UserDog userDog = optionalUser.isPresent() ? userDogService.findUserDogById(user.getId()) : new UserDog();
-            UserCat userCat = optionalUser.isPresent() ? userCatService.findUserCatById(user.getId()) : new UserCat();
+            UserDog userDog = optionalUser.isPresent() ? userDogService.findUserDogByUserId(user.getId()) : new UserDog();
+            UserCat userCat = optionalUser.isPresent() ? userCatService.findUserCatByUserId(user.getId()) : new UserCat();
 
             if ("/start".equals(messageText)) {
                 if (userService.findUserByChatId(chatId).isEmpty()) {
@@ -182,7 +182,9 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
                     if (userDog != null) {
                         userDog.setFullName(messageText);
                         userDogService.updateUserDog(userDog);
-                    } else if (userCat != null) {
+                    }
+
+                    if (userCat != null) {
                         userCat.setFullName(messageText);
                         userCatService.updateUserCat(userCat);
                     }
@@ -198,7 +200,9 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
                         userService.updateUser(user);
                         sendMessageToUser(chatId, textMessage);
                         dogMainMenuKeyboard(update);
-                    } else if(userCat != null){
+                    }
+
+                    if(userCat != null){
                         userCat.setPhone(Long.valueOf(messageText));
                         userCatService.updateUserCat(userCat);
                         String textMessage = "Регистрация успешна!";
@@ -287,6 +291,8 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
 
                     String textMessage = "Спасибо за ваш отчет!";
                     sendMessageToUser(chatId, textMessage);
+                    user.setStartReport(false);
+                    userService.updateUser(user);
                     if (userDog != null) {
                         dogMainMenuKeyboard(update);
                     }
@@ -317,7 +323,7 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
             Long userId = userService.findUserByChatId(update.getCallbackQuery().getFrom().getId()).get().getId();
         if (callBackData.equals(CallBackDataEnum.CAT_SHELTER_BUTTON.getMessage())) {
             logger.info("пользователь нажал на кнопку приют для кошек");
-            if (userDogService.findUserDogByUserId(userId).isEmpty() && userCatService.findUserCatByUserId(userId).isEmpty()) {
+            if (userDogService.findUserDogByUserId(userId) == null && userCatService.findUserCatByUserId(userId) == null) {
                 UserCat userCat = new UserCat();
                 if (userCat.getUserId() == null) {
                     userCat.setUserId(userId);
@@ -328,7 +334,7 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
         }
         if (callBackData.equals(CallBackDataEnum.DOG_SHELTER_BUTTON.getMessage())) {
             logger.info("пользователь нажал на кнопку приют для собак");
-            if (userDogService.findUserDogByUserId(userId).isEmpty() && userCatService.findUserCatByUserId(userId).isEmpty()) {
+            if (userDogService.findUserDogByUserId(userId) == null && userCatService.findUserCatByUserId(userId) == null) {
                 UserDog userDog = new UserDog();
                 if (userDog.getUserId() == null) {
                     userDog.setUserId(userId);

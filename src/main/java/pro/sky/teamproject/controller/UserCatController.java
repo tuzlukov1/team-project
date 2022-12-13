@@ -121,7 +121,7 @@ public class UserCatController {
             tags = "Cat_Owners"
     )
     @GetMapping
-    public ResponseEntity<Collection<UserCat>> findUser(
+    public ResponseEntity<UserCat> findUser(
             @Parameter(description = "Имя пользователя в мессенджере Telegram") @RequestParam(required = false) Long userId,
             @Parameter(description = "Имя введеное пользователем при регистрации") @RequestParam(required = false) String fullName,
             @Parameter(description = "Номер телефона пользователя") @RequestParam(required = false) Long phone) {
@@ -134,11 +134,12 @@ public class UserCatController {
         if (phone != null && phone > 0) {
             return ResponseEntity.ok(userCatService.findUserCatByPhone(phone));
         }
-        Collection<UserCat> foundUsers = userCatService.findAllUsersCat();
-        if (foundUsers == null) {
-            return ResponseEntity.ok(Collections.emptyList());
-        } else {
-            return ResponseEntity.ok(foundUsers);
-        }
+        //Collection<UserCat> foundUsers = userCatService.findAllUsersCat();
+//        if (foundUsers == null) {
+//            return ResponseEntity.notFound().build();
+//        } else {
+//            return ResponseEntity.ok(foundUsers);
+//        }
+        return ResponseEntity.notFound().build();
     }
 }

@@ -154,7 +154,7 @@ class UserDogControllerTest {
         user.setPhone(phone);
 
         when(usersDogRepository.findUserDogByFullNameIgnoreCase(any(String.class)))
-                .thenReturn(Collections.singletonList(user));
+                .thenReturn(user);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/userDog?fullName=" + fullName)
@@ -177,7 +177,7 @@ class UserDogControllerTest {
         user.setPhone(phone);
 
         when(usersDogRepository.findUserDogByFullNameIgnoreCase(any(String.class)))
-                .thenReturn(Collections.singletonList(user));
+                .thenReturn(user);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/userDog?fullName=" + fullName)
@@ -200,7 +200,7 @@ class UserDogControllerTest {
         user.setPhone(phone);
 
         when(usersDogRepository.findUserDogByPhone(any(Long.class)))
-                .thenReturn(Collections.singletonList(user));
+                .thenReturn(user);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/userDog?phone=" + phone)
@@ -229,9 +229,9 @@ class UserDogControllerTest {
                         .get("/userDog")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(id))
-                .andExpect(jsonPath("$[0].fullName").value(fullName))
-                .andExpect(jsonPath("$[0].phone").value(phone));
+                .andExpect(jsonPath("$.id").value(id))
+                .andExpect(jsonPath("$.fullName").value(fullName))
+                .andExpect(jsonPath("$.phone").value(phone));
     }
 
     @Test
