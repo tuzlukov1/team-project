@@ -21,9 +21,7 @@ import pro.sky.teamproject.constant.CallBackDataEnum;
 import pro.sky.teamproject.constant.ConstantCatMessageEnum;
 import pro.sky.teamproject.constant.ConstantMessageEnum;
 import pro.sky.teamproject.entity.*;
-import pro.sky.teamproject.repository.UsersCatRepository;
-import pro.sky.teamproject.repository.UsersDogRepository;
-import pro.sky.teamproject.repository.UsersRepository;
+import pro.sky.teamproject.repository.*;
 import pro.sky.teamproject.services.*;
 
 import java.io.*;
@@ -37,6 +35,7 @@ import java.util.Optional;
 
 @Service
 public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
+
     private final UsersRepository usersRepository;
 
     private final TelegramBotConfiguration configuration;
@@ -47,13 +46,16 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
     private final UserCatService userCatService;
     private final UsersCatRepository usersCatRepository;
     private final UsersDogRepository usersDogRepository;
+    private final UsersReportRepository usersReportRepository;
+    private final OwnershipCatsRepository ownershipCatsRepository;
+    private final OwnershipDogsRepository ownershipDogsRepository;
 
     private final Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
 
     public TelegramBotUpdatesListener(TelegramBotConfiguration configuration, UserService userService,
                                       UserReportService userReportService, UserReportPhotoService userReportPhotoService, UserDogService userDogService, UserCatService userCatService,
                                       UsersCatRepository usersCatRepository, UsersDogRepository usersDogRepository,
-                                      UsersRepository usersRepository) {
+                                      UsersRepository usersRepository, UsersReportRepository usersReportRepository, OwnershipCatsRepository ownershipCatsRepository, OwnershipDogsRepository ownershipDogsRepository) {
         this.configuration = configuration;
         this.userService = userService;
         this.userReportService = userReportService;
@@ -63,6 +65,9 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
         this.usersCatRepository = usersCatRepository;
         this.usersDogRepository = usersDogRepository;
         this.usersRepository = usersRepository;
+        this.usersReportRepository = usersReportRepository;
+        this.ownershipCatsRepository = ownershipCatsRepository;
+        this.ownershipDogsRepository = ownershipDogsRepository;
     }
 
     @Override
@@ -82,15 +87,51 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
      * для тех, кто прошел/не прошел испытательный срок
      * кому продлили испытательный срок
      */
-    @Scheduled(cron = "0 0 0/10 * * *")
+    @Scheduled(cron = "0 0 10 * * *")
     public void sendCatDogReport() {
+        LocalDate today = LocalDate.now();
+        List<UserReport> userReportList = usersReportRepository.findAll();
+        userReportList.forEach(
+                userReport -> {
+                    if (!userReport.getReportDate().equals(today)) {
+                        long chatId = userReport.getUserId();
+                        sendMessageToUser(chatId, ConstantMessageEnum.WARNING_FORGET_REPORT.getMessage());
+                        logger.info("Пользователю с ID {} было отправлено " +
+                                "сообщение о несвоевременности сдаваемых им отчетов", chatId);
+                    }
+                }
+        );
+        List<OwnershipCats> ownershipCatsList = ownershipCatsRepository.findAll();
+        ownershipCatsList.forEach(
+                ownershipCats -> {
+                    long chatId = ownershipCats.getUserCat().getUserId();
+                    if (ownershipCats.getPassageProbation().equalsIgnoreCase("пройден")) {
+                        sendMessageToUser(chatId, ConstantMessageEnum.GREETING_MESSAGE.getMessage());
+                        logger.info("Пользователю с ID {} было отправлено " +
+                                "сообщение о прохождении испытательного срока", chatId);
+                    } else if (ownershipCats.getPassageProbation().equalsIgnoreCase("не пройден")) {
+                        sendMessageToUser(chatId, ConstantMessageEnum.FAILED_MESSAGE.getMessage());
+                        logger.info("Пользователю с ID {} было отправлено " +
+                                "сообщение о провале испытательного срока", chatId);
+                    }
+                }
+        );
 
-        String greetingMessage = "Поздравляем, вы прошли испытательный срок!";
-        String sadMessage = "К сожалению, вы не прошли спытательный срок." +
-                "\nВ ближайшие сутки подготовьте животное для транспартировки " +
-                "\nС вами дополнительно свяжется волонтер для назначения времени привоза животного";
-        String extraTimeMessage = "Вам назначено дополнительный испытательный срок." +
-                "\nОн составляет - ";
+        List<OwnershipDogs> ownershipDogsList = ownershipDogsRepository.findAll();
+        ownershipDogsList.forEach(
+                ownershipDogs -> {
+                    long chatId = ownershipDogs.getUserDog().getUserId();
+                    if (ownershipDogs.getPassageProbation().equalsIgnoreCase("пройден")) {
+                        sendMessageToUser(chatId, ConstantMessageEnum.GREETING_MESSAGE.getMessage());
+                        logger.info("Пользователю с ID {} было отправлено " +
+                                "сообщение о прохождении испытательного срока", chatId);
+                    } else if (ownershipDogs.getPassageProbation().equalsIgnoreCase("не пройден")) {
+                        sendMessageToUser(chatId, ConstantMessageEnum.FAILED_MESSAGE.getMessage());
+                        logger.info("Пользователю с ID {} было отправлено " +
+                                "сообщение о провале испытательного срока", chatId);
+                    }
+                }
+        );
 
         List<User> userList = usersRepository.findAll();
         userList.forEach(
@@ -98,82 +139,16 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
                     if (user.getHaveWarning()) {
                         long chatId = user.getChatId();
                         sendMessageToUser(chatId, ConstantMessageEnum.WARNING.getMessage());
-                        logger.info("Пользователь с ID {} было отправлено предупреждение" +
-                                " о необходимости отправки отчета", chatId);
+                        logger.info("Пользователю с ID {} было отправлено предупреждение" +
+                                " о необходимости более качественного отчета", chatId);
                         user.setHaveWarning(false);
                         userService.updateUser(user);
                     }
                 }
         );
 
-        // Для усыновителей собак:
-
-        List<UserDog> sendDogReport = usersDogRepository.findAll();
-
-        sendDogReport.forEach(userDog -> {
-            long chatId = userDog.getId();
-            //Здесь нужно внести проверку со столбиком количества дней оставшихся у усыновителя
-            // в ownerShipDog и если они кончились и волонтер одобрил на завершение, то отправлять сообщение
-            if (greetingMessage.equals("rr")) {
-                sendMessageToUser(chatId, greetingMessage);
-                logger.info("Пользователь с ID {} было отправлено уведомление " +
-                        "о прохождении испытательного срока", chatId);
-            }
-            //Здесь нужно внести проверку со столбиком количества дней оставшихся у усыновителя
-            // в ownerShipDog и если они кончились и волонтер не одобрил на завершение, то отправлять сообщение
-            if (sadMessage.equals("qq")) {
-                sendMessageToUser(chatId, sadMessage);
-                logger.info("Пользователь с ID {} было отправлено уведомление " +
-                        "о провале испытательного срока", chatId);
-            }
-            //Здесь нужно внести проверку со столбиком количества дней оставшихся у усыновителя
-            // в ownerShipDog и если они кончились и волонтер их продлил, то отправлять сообщение с указанием
-            // количеством доп дней(лучше создать доп таблицу с булевой переменной продлил/не продлил)
-            if (extraTimeMessage.equals("yy")) {
-                sendMessageToUser(chatId, extraTimeMessage + 14);
-                logger.info("Пользователь с ID {} было отправлено уведомление " +
-                        "о продлении испытательно срока", chatId);
-            }
-
-        });
-
-        //Для усыновителей кошек:
-
-        List<UserCat> sendWarningCatReport = usersCatRepository.findAll();
-        sendWarningCatReport.forEach(userCat -> {
-            long chatId = userCat.getId();
-
-            if (greetingMessage.equals("rr")) {
-                sendMessageToUser(chatId, greetingMessage);
-                logger.info("Пользователь с ID {} было отправлено уведомление " +
-                        "о прохождении испытательного срока", chatId);
-            }
-            if (sadMessage.equals("qq")) {
-                sendMessageToUser(chatId, sadMessage);
-                logger.info("Пользователь с ID {} было отправлено уведомление " +
-                        "о провале испытательного срока", chatId);
-            }
-            if (extraTimeMessage.equals("yy")) {
-                sendMessageToUser(chatId, extraTimeMessage + 14);
-                logger.info("Пользователь с ID {} было отправлено уведомление " +
-                        "о продлении испытательно срока", chatId);
-            }
-        });
     }
 
-    /**
-     * Вывод с проверкой раз в тридцать минут сообщения, прошел ли усыновитель испытательны срок или нет и не продлили
-     * ли ему испытательный срок
-     */
-    @Scheduled(cron = "0 0/30 * * * *")
-    public void sendUserCatDogStatus() {
-        String greetingMessage = "Поздравляем, вы прошли испытательный срок!";
-        String sadMessage = "К сожалению, вы не прошли спытательный срок." +
-                "\nВ ближайшие сутки подготовьте животное для транспартировки " +
-                "\nС вами дополнительно свяжется волонтер для назначения времени привоза животного";
-        String extraTimeMessage = "Вам назначено дополнительный испытательный срок." +
-                "\nОн составляет - ";
-    }
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -795,7 +770,7 @@ public class TelegramBotUpdatesListener extends TelegramLongPollingBot {
     /**
      * Метод для отправки сообщения пользователю
      */
-    private void sendMessageToUser(long chatId, String textMessage) {
+    public void sendMessageToUser(long chatId, String textMessage) {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
         message.setText(textMessage);

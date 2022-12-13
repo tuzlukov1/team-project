@@ -2,12 +2,14 @@ package pro.sky.teamproject.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import pro.sky.teamproject.entity.AnimalDog;
 import pro.sky.teamproject.entity.OwnershipDogs;
 import pro.sky.teamproject.entity.UserDog;
+import pro.sky.teamproject.listener.TelegramBotUpdatesListener;
 import pro.sky.teamproject.repository.OwnershipDogsRepository;
 
 import java.time.LocalDate;
@@ -27,12 +29,16 @@ public class OwnershipDogsService {
     private final UserDogService userDogService;
     private final DogService dogService;
 
+    private final TelegramBotUpdatesListener telegramBotUpdatesListener;
+
+
     public OwnershipDogsService(OwnershipDogsRepository ownershipDogsRepository,
                                 UserDogService userDogService,
-                                DogService dogService) {
+                                DogService dogService,@Lazy TelegramBotUpdatesListener telegramBotUpdatesListener) {
         this.ownershipDogsRepository = ownershipDogsRepository;
         this.userDogService = userDogService;
         this.dogService = dogService;
+        this.telegramBotUpdatesListener = telegramBotUpdatesListener;
     }
 
     /**
@@ -119,9 +125,12 @@ public class OwnershipDogsService {
         if (ownershipDog == null) {
             return null;
         }
+        String probationText = "Дорогой усыновитель, ваш испытательный срок" +
+                "\nбыл продлен на " + probationDays + "дней";
         LocalDate endProbation = LocalDate.now().plusDays(probationDays);
         ownershipDog.setProbationDays(probationDays);
         ownershipDog.setEndDateProbation(endProbation);
+        telegramBotUpdatesListener.sendMessageToUser(id, probationText);
         return ownershipDogsRepository.save(ownershipDog);
     }
 
@@ -189,6 +198,7 @@ public class OwnershipDogsService {
         logger.debug("Was invoked method for find all");
         return ownershipDogsRepository.findAll();
     }
+
 
     /**
      * Метод актуализирует информацию (производит обратный отсчет) в поле
