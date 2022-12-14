@@ -8,7 +8,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import pro.sky.teamproject.entity.AnimalCat;
 import pro.sky.teamproject.entity.OwnershipCats;
-import pro.sky.teamproject.entity.OwnershipDogs;
 import pro.sky.teamproject.entity.UserCat;
 import pro.sky.teamproject.listener.TelegramBotUpdatesListener;
 import pro.sky.teamproject.repository.OwnershipCatsRepository;

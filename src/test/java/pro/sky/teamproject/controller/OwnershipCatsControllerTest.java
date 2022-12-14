@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import pro.sky.teamproject.entity.AnimalCat;
 import pro.sky.teamproject.entity.OwnershipCats;
 import pro.sky.teamproject.entity.UserCat;
+import pro.sky.teamproject.listener.TelegramBotUpdatesListener;
 import pro.sky.teamproject.repository.OwnershipCatsRepository;
 import pro.sky.teamproject.services.CatService;
 import pro.sky.teamproject.services.OwnershipCatsService;
@@ -41,6 +42,9 @@ public class OwnershipCatsControllerTest {
 
     @MockBean
     private CatService catService;
+
+    @MockBean
+    TelegramBotUpdatesListener telegramBotUpdatesListener;
 
     @SpyBean
     private OwnershipCatsService ownershipCatsService;
@@ -84,48 +88,48 @@ public class OwnershipCatsControllerTest {
         return ownershipCats;
     }
 
-//    @Test
-//    public void createOwnershipCatPositiveTest() throws Exception {
-//
-////        UserCat
-//        final Long idUserCat = 1L;
-//        final String fullName = "User";
-//        final Long phone = 89994561122L;
-//        final Long userId = 1L;
-//
-////        AnimalCat
-//        final long idAnimalCat = 1L;
-//        final String name = "Cat";
-//        final String breed = "outbred";
-//        final int age = 3;
-//
-////        OWNERSHIP_CAT
-//        final long id = 1L;
-//        final UserCat userCat = createNewUserCatForTests(idUserCat, fullName, phone, userId);
-//        final AnimalCat animalCat = createNewCatForTests(idAnimalCat, name, breed, age);
-//        final int probationDays = 30;
-//        final LocalDate endDateProbation = LocalDate.of(2022, 12, 31);
-//        final String passageProbation = "не окончен";
-//        OwnershipCats ownershipCats = createNewOwnershipCatForTests(id, userCat, animalCat, probationDays, endDateProbation, passageProbation);
-//
-//        when(userCatService.findUserCatById(any(Long.class)))
-//                .thenReturn(userCat);
-//        when(catService.findAnimalById(any(Long.class)))
-//                .thenReturn(animalCat);
-//        when(ownershipCatsRepository.save(any(OwnershipCats.class)))
-//                .thenReturn(ownershipCats);
-//
-//        mockMvc.perform(MockMvcRequestBuilders
-//                        .post("/ownershipCats?userCatId=" + idUserCat + "&animalCatId=" + idAnimalCat + "&probationDays=" + probationDays)
-//                        .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.id").value(id))
-//                .andExpect(jsonPath("$.userCat").value(userCat))
-//                .andExpect(jsonPath("$.animalCat").value(animalCat))
-//                .andExpect(jsonPath("$.probationDays").value(probationDays))
-//                .andExpect(jsonPath("$.endDateProbation").value(endDateProbation.toString()))
-//                .andExpect(jsonPath("$.passageProbation").value(passageProbation));
-//    }
+    @Test
+    public void createOwnershipCatPositiveTest() throws Exception {
+
+//        UserCat
+        final Long idUserCat = 1L;
+        final String fullName = "User";
+        final Long phone = 89994561122L;
+        final Long userId = 1L;
+
+//        AnimalCat
+        final long idAnimalCat = 1L;
+        final String name = "Cat";
+        final String breed = "outbred";
+        final int age = 3;
+
+//        OWNERSHIP_CAT
+        final long id = 1L;
+        final UserCat userCat = createNewUserCatForTests(idUserCat, fullName, phone, userId);
+        final AnimalCat animalCat = createNewCatForTests(idAnimalCat, name, breed, age);
+        final int probationDays = 30;
+        final LocalDate endDateProbation = LocalDate.of(2022, 12, 31);
+        final String passageProbation = "не окончен";
+        OwnershipCats ownershipCats = createNewOwnershipCatForTests(id, userCat, animalCat, probationDays, endDateProbation, passageProbation);
+
+        when(userCatService.findUserCatById(any(Long.class)))
+                .thenReturn(userCat);
+        when(catService.findAnimalById(any(Long.class)))
+                .thenReturn(animalCat);
+        when(ownershipCatsRepository.save(any(OwnershipCats.class)))
+                .thenReturn(ownershipCats);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post("/ownershipCats?userCatId=" + idUserCat + "&animalCatId=" + idAnimalCat + "&probationDays=" + probationDays)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(id))
+                .andExpect(jsonPath("$.userCat").value(userCat))
+                .andExpect(jsonPath("$.animalCat").value(animalCat))
+                .andExpect(jsonPath("$.probationDays").value(probationDays))
+                .andExpect(jsonPath("$.endDateProbation").value(endDateProbation.toString()))
+                .andExpect(jsonPath("$.passageProbation").value(passageProbation));
+    }
 
     @Test
     public void createOwnershipCatBadRequestTest() throws Exception {
@@ -162,44 +166,44 @@ public class OwnershipCatsControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-//    @Test
-//    public void getOwnershipCatInfoPositiveTest() throws Exception {
-//
-////        UserCat
-//        final Long idUserCat = 1L;
-//        final String fullName = "User";
-//        final Long phone = 89994561122L;
-//        final Long userId = 1L;
-//
-////        AnimalCat
-//        final long idAnimalCat = 1L;
-//        final String name = "Cat";
-//        final String breed = "outbred";
-//        final int age = 3;
-//
-////        OWNERSHIP_CAT
-//        final long id = 1L;
-//        final UserCat userCat = createNewUserCatForTests(idUserCat, fullName, phone, userId);
-//        final AnimalCat animalCat = createNewCatForTests(idAnimalCat, name, breed, age);
-//        final int probationDays = 30;
-//        final LocalDate endDateProbation = LocalDate.of(2022, 12, 31);
-//        final String passageProbation = "не окончен";
-//        OwnershipCats ownershipCats = createNewOwnershipCatForTests(id, userCat, animalCat, probationDays, endDateProbation, passageProbation);
-//
-//        when(ownershipCatsRepository.findById(any(Long.class)))
-//                .thenReturn(Optional.of(ownershipCats));
-//
-//        mockMvc.perform(MockMvcRequestBuilders
-//                        .get("/ownershipCats/{id}", id)
-//                        .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.id").value(id))
-//                .andExpect(jsonPath("$.userCat").value(userCat))
-//                .andExpect(jsonPath("$.animalCat").value(animalCat))
-//                .andExpect(jsonPath("$.probationDays").value(probationDays))
-//                .andExpect(jsonPath("$.endDateProbation").value(endDateProbation.toString()))
-//                .andExpect(jsonPath("$.passageProbation").value(passageProbation));
-//    }
+    @Test
+    public void getOwnershipCatInfoPositiveTest() throws Exception {
+
+//        UserCat
+        final Long idUserCat = 1L;
+        final String fullName = "User";
+        final Long phone = 89994561122L;
+        final Long userId = 1L;
+
+//        AnimalCat
+        final long idAnimalCat = 1L;
+        final String name = "Cat";
+        final String breed = "outbred";
+        final int age = 3;
+
+//        OWNERSHIP_CAT
+        final long id = 1L;
+        final UserCat userCat = createNewUserCatForTests(idUserCat, fullName, phone, userId);
+        final AnimalCat animalCat = createNewCatForTests(idAnimalCat, name, breed, age);
+        final int probationDays = 30;
+        final LocalDate endDateProbation = LocalDate.of(2022, 12, 31);
+        final String passageProbation = "не окончен";
+        OwnershipCats ownershipCats = createNewOwnershipCatForTests(id, userCat, animalCat, probationDays, endDateProbation, passageProbation);
+
+        when(ownershipCatsRepository.findById(any(Long.class)))
+                .thenReturn(Optional.of(ownershipCats));
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/ownershipCats/{id}", id)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(id))
+                .andExpect(jsonPath("$.userCat").value(userCat))
+                .andExpect(jsonPath("$.animalCat").value(animalCat))
+                .andExpect(jsonPath("$.probationDays").value(probationDays))
+                .andExpect(jsonPath("$.endDateProbation").value(endDateProbation.toString()))
+                .andExpect(jsonPath("$.passageProbation").value(passageProbation));
+    }
 
     @Test
     public void getOwnershipCatInfoBadRequestTest() throws Exception {
@@ -224,50 +228,50 @@ public class OwnershipCatsControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-//    @Test
-//    public void updateOwnershipCatPositiveTest() throws Exception {
-//
-////        UserCat
-//        final Long idUserCat = 1L;
-//        final String fullName = "User";
-//        final Long phone = 89994561122L;
-//        final Long userId = 1L;
-//
-////        AnimalCat
-//        final long idAnimalCat = 1L;
-//        final String name = "Cat";
-//        final String breed = "outbred";
-//        final int age = 3;
-//
-////        OWNERSHIP_CAT
-//        final long id = 1L;
-//        final UserCat userCat = createNewUserCatForTests(idUserCat, fullName, phone, userId);
-//        final AnimalCat animalCat = createNewCatForTests(idAnimalCat, name, breed, age);
-//        final int probationDays = 30;
-//        final LocalDate endDateProbation = LocalDate.of(2022, 12, 31);
-//        final String passageProbation = "не окончен";
-//        OwnershipCats ownershipCats = createNewOwnershipCatForTests(id, userCat, animalCat, probationDays, endDateProbation, passageProbation);
-//
-//        when(userCatService.findUserCatById(any(Long.class)))
-//                .thenReturn(userCat);
-//        when(catService.findAnimalById(any(Long.class)))
-//                .thenReturn(animalCat);
-//        when(ownershipCatsRepository.findById(any(Long.class)))
-//                .thenReturn(Optional.of(ownershipCats));
-//        when(ownershipCatsRepository.save(any(OwnershipCats.class)))
-//                .thenReturn(ownershipCats);
-//
-//        mockMvc.perform(MockMvcRequestBuilders
-//                        .put("/ownershipCats?id=" + id + "&userCatId=" + idUserCat + "&animalCatId=" + idAnimalCat)
-//                        .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.id").value(id))
-//                .andExpect(jsonPath("$.userCat").value(userCat))
-//                .andExpect(jsonPath("$.animalCat").value(animalCat))
-//                .andExpect(jsonPath("$.probationDays").value(probationDays))
-//                .andExpect(jsonPath("$.endDateProbation").value(endDateProbation.toString()))
-//                .andExpect(jsonPath("$.passageProbation").value(passageProbation));
-//    }
+    @Test
+    public void updateOwnershipCatPositiveTest() throws Exception {
+
+//        UserCat
+        final Long idUserCat = 1L;
+        final String fullName = "User";
+        final Long phone = 89994561122L;
+        final Long userId = 1L;
+
+//        AnimalCat
+        final long idAnimalCat = 1L;
+        final String name = "Cat";
+        final String breed = "outbred";
+        final int age = 3;
+
+//        OWNERSHIP_CAT
+        final long id = 1L;
+        final UserCat userCat = createNewUserCatForTests(idUserCat, fullName, phone, userId);
+        final AnimalCat animalCat = createNewCatForTests(idAnimalCat, name, breed, age);
+        final int probationDays = 30;
+        final LocalDate endDateProbation = LocalDate.of(2022, 12, 31);
+        final String passageProbation = "не окончен";
+        OwnershipCats ownershipCats = createNewOwnershipCatForTests(id, userCat, animalCat, probationDays, endDateProbation, passageProbation);
+
+        when(userCatService.findUserCatById(any(Long.class)))
+                .thenReturn(userCat);
+        when(catService.findAnimalById(any(Long.class)))
+                .thenReturn(animalCat);
+        when(ownershipCatsRepository.findById(any(Long.class)))
+                .thenReturn(Optional.of(ownershipCats));
+        when(ownershipCatsRepository.save(any(OwnershipCats.class)))
+                .thenReturn(ownershipCats);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put("/ownershipCats?id=" + id + "&userCatId=" + idUserCat + "&animalCatId=" + idAnimalCat)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(id))
+                .andExpect(jsonPath("$.userCat").value(userCat))
+                .andExpect(jsonPath("$.animalCat").value(animalCat))
+                .andExpect(jsonPath("$.probationDays").value(probationDays))
+                .andExpect(jsonPath("$.endDateProbation").value(endDateProbation.toString()))
+                .andExpect(jsonPath("$.passageProbation").value(passageProbation));
+    }
 
     @Test
     public void updateOwnershipCatBadRequestTest() throws Exception {
@@ -306,52 +310,52 @@ public class OwnershipCatsControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-//    @Test
-//    public void updateProbationDaysOwnershipCatPositiveTest() throws Exception {
-//
-////        UserCat
-//        final Long idUserCat = 1L;
-//        final String fullName = "User";
-//        final Long phone = 89994561122L;
-//        final Long userId = 1L;
-//
-////        AnimalCat
-//        final long idAnimalCat = 1L;
-//        final String name = "Cat";
-//        final String breed = "outbred";
-//        final int age = 3;
-//
-////        OWNERSHIP_CAT before with edit probation days
-//        final long id = 1L;
-//        final UserCat userCat = createNewUserCatForTests(idUserCat, fullName, phone, userId);
-//        final AnimalCat animalCat = createNewCatForTests(idAnimalCat, name, breed, age);
-//        final int probationDays = 30;
-//        final LocalDate endDateProbation = LocalDate.now().plusDays(probationDays);
-//        final String passageProbation = "не окончен";
-//        OwnershipCats ownershipCats = createNewOwnershipCatForTests(id, userCat, animalCat, probationDays, endDateProbation, passageProbation);
-//
-////        OWNERSHIP_CAT after with edit probation days
-//        OwnershipCats ownershipCatsEdit = ownershipCats;
-//        final int probationDaysEdit = 14;
-//        final LocalDate endDateProbationEdit = LocalDate.now().plusDays(probationDaysEdit);
-//        ownershipCatsEdit.setProbationDays(probationDaysEdit);
-//
-//        when(ownershipCatsRepository.findById(any(Long.class)))
-//                .thenReturn(Optional.of(ownershipCats));
-//        when(ownershipCatsRepository.save(any(OwnershipCats.class)))
-//                .thenReturn(ownershipCatsEdit);
-//
-//        mockMvc.perform(MockMvcRequestBuilders
-//                        .put("/ownershipCats/probation-days?id=" + id + "&probationDays=" + probationDaysEdit)
-//                        .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.id").value(id))
-//                .andExpect(jsonPath("$.userCat").value(userCat))
-//                .andExpect(jsonPath("$.animalCat").value(animalCat))
-//                .andExpect(jsonPath("$.probationDays").value(probationDaysEdit))
-//                .andExpect(jsonPath("$.endDateProbation").value(endDateProbationEdit.toString()))
-//                .andExpect(jsonPath("$.passageProbation").value(passageProbation));
-//    }
+    @Test
+    public void updateProbationDaysOwnershipCatPositiveTest() throws Exception {
+
+//        UserCat
+        final Long idUserCat = 1L;
+        final String fullName = "User";
+        final Long phone = 89994561122L;
+        final Long userId = 1L;
+
+//        AnimalCat
+        final long idAnimalCat = 1L;
+        final String name = "Cat";
+        final String breed = "outbred";
+        final int age = 3;
+
+//        OWNERSHIP_CAT before with edit probation days
+        final long id = 1L;
+        final UserCat userCat = createNewUserCatForTests(idUserCat, fullName, phone, userId);
+        final AnimalCat animalCat = createNewCatForTests(idAnimalCat, name, breed, age);
+        final int probationDays = 30;
+        final LocalDate endDateProbation = LocalDate.now().plusDays(probationDays);
+        final String passageProbation = "не окончен";
+        OwnershipCats ownershipCats = createNewOwnershipCatForTests(id, userCat, animalCat, probationDays, endDateProbation, passageProbation);
+
+//        OWNERSHIP_CAT after with edit probation days
+        OwnershipCats ownershipCatsEdit = ownershipCats;
+        final int probationDaysEdit = 14;
+        final LocalDate endDateProbationEdit = LocalDate.now().plusDays(probationDaysEdit);
+        ownershipCatsEdit.setProbationDays(probationDaysEdit);
+
+        when(ownershipCatsRepository.findById(any(Long.class)))
+                .thenReturn(Optional.of(ownershipCats));
+        when(ownershipCatsRepository.save(any(OwnershipCats.class)))
+                .thenReturn(ownershipCatsEdit);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put("/ownershipCats/probation-days?id=" + id + "&probationDays=" + probationDaysEdit)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(id))
+                .andExpect(jsonPath("$.userCat").value(userCat))
+                .andExpect(jsonPath("$.animalCat").value(animalCat))
+                .andExpect(jsonPath("$.probationDays").value(probationDaysEdit))
+                .andExpect(jsonPath("$.endDateProbation").value(endDateProbationEdit.toString()))
+                .andExpect(jsonPath("$.passageProbation").value(passageProbation));
+    }
 
     @Test
     public void updateProbationDaysOwnershipCatNegativeTest() throws Exception {
@@ -435,51 +439,51 @@ public class OwnershipCatsControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-//    @Test
-//    public void updatePassageProbationOwnershipCatPositiveTest() throws Exception {
-//
-////        UserCat
-//        final Long idUserCat = 1L;
-//        final String fullName = "User";
-//        final Long phone = 89994561122L;
-//        final Long userId = 1L;
-//
-////        AnimalCat
-//        final long idAnimalCat = 1L;
-//        final String name = "Cat";
-//        final String breed = "outbred";
-//        final int age = 3;
-//
-////        OWNERSHIP_CAT before with edit passage probation
-//        final long id = 1L;
-//        final UserCat userCat = createNewUserCatForTests(idUserCat, fullName, phone, userId);
-//        final AnimalCat animalCat = createNewCatForTests(idAnimalCat, name, breed, age);
-//        final int probationDays = 30;
-//        final LocalDate endDateProbation = LocalDate.now();
-//        final String passageProbation = "не окончен";
-//        OwnershipCats ownershipCats = createNewOwnershipCatForTests(id, userCat, animalCat, probationDays, endDateProbation, passageProbation);
-//
-////        OWNERSHIP_CAT after with edit passage probation
-//        OwnershipCats ownershipCatsEdit = ownershipCats;
-//        String passageProbationEdit = "пройден";
-//        ownershipCats.setPassageProbation(passageProbationEdit);
-//
-//        when(ownershipCatsRepository.findById(any(Long.class)))
-//                .thenReturn(Optional.of(ownershipCats));
-//        when(ownershipCatsRepository.save(any(OwnershipCats.class)))
-//                .thenReturn(ownershipCatsEdit);
-//
-//        mockMvc.perform(MockMvcRequestBuilders
-//                        .put("/ownershipCats/passage-probation?id=" + id + "&passageProbation=" + passageProbationEdit)
-//                        .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.id").value(id))
-//                .andExpect(jsonPath("$.userCat").value(userCat))
-//                .andExpect(jsonPath("$.animalCat").value(animalCat))
-//                .andExpect(jsonPath("$.probationDays").value(probationDays))
-//                .andExpect(jsonPath("$.endDateProbation").value(endDateProbation.toString()))
-//                .andExpect(jsonPath("$.passageProbation").value(passageProbationEdit));
-//    }
+    @Test
+    public void updatePassageProbationOwnershipCatPositiveTest() throws Exception {
+
+//        UserCat
+        final Long idUserCat = 1L;
+        final String fullName = "User";
+        final Long phone = 89994561122L;
+        final Long userId = 1L;
+
+//        AnimalCat
+        final long idAnimalCat = 1L;
+        final String name = "Cat";
+        final String breed = "outbred";
+        final int age = 3;
+
+//        OWNERSHIP_CAT before with edit passage probation
+        final long id = 1L;
+        final UserCat userCat = createNewUserCatForTests(idUserCat, fullName, phone, userId);
+        final AnimalCat animalCat = createNewCatForTests(idAnimalCat, name, breed, age);
+        final int probationDays = 30;
+        final LocalDate endDateProbation = LocalDate.now();
+        final String passageProbation = "не окончен";
+        OwnershipCats ownershipCats = createNewOwnershipCatForTests(id, userCat, animalCat, probationDays, endDateProbation, passageProbation);
+
+//        OWNERSHIP_CAT after with edit passage probation
+        OwnershipCats ownershipCatsEdit = ownershipCats;
+        String passageProbationEdit = "пройден";
+        ownershipCats.setPassageProbation(passageProbationEdit);
+
+        when(ownershipCatsRepository.findById(any(Long.class)))
+                .thenReturn(Optional.of(ownershipCats));
+        when(ownershipCatsRepository.save(any(OwnershipCats.class)))
+                .thenReturn(ownershipCatsEdit);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put("/ownershipCats/passage-probation?id=" + id + "&passageProbation=" + passageProbationEdit)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(id))
+                .andExpect(jsonPath("$.userCat").value(userCat))
+                .andExpect(jsonPath("$.animalCat").value(animalCat))
+                .andExpect(jsonPath("$.probationDays").value(probationDays))
+                .andExpect(jsonPath("$.endDateProbation").value(endDateProbation.toString()))
+                .andExpect(jsonPath("$.passageProbation").value(passageProbationEdit));
+    }
 
     @Test
     public void updatePassageProbationOwnershipCatBadRequestTest() throws Exception {
@@ -533,46 +537,46 @@ public class OwnershipCatsControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-//    @Test
-//    public void findOwnershipCatsByEndDateProbationPositiveTest() throws Exception {
-//
-////        UserCat
-//        final Long idUserCat = 1L;
-//        final String fullName = "User";
-//        final Long phone = 89994561122L;
-//        final Long userId = 1L;
-//
-////        AnimalCat
-//        final long idAnimalCat = 1L;
-//        final String name = "Cat";
-//        final String breed = "outbred";
-//        final int age = 3;
-//
-////        OWNERSHIP_CAT
-//        final long id = 1L;
-//        final UserCat userCat = createNewUserCatForTests(idUserCat, fullName, phone, userId);
-//        final AnimalCat animalCat = createNewCatForTests(idAnimalCat, name, breed, age);
-//        final int probationDays = 30;
-//        final LocalDate endDateProbation = LocalDate.of(2022, 12, 31);
-//        final String passageProbation = "не окончен";
-//        OwnershipCats ownershipCats = createNewOwnershipCatForTests(id, userCat, animalCat, probationDays, endDateProbation, passageProbation);
-//
-//        String endDateProbationForTest = "2022-12-31";
-//
-//        when(ownershipCatsRepository.findOwnershipCatsByEndDateProbation(ArgumentMatchers.eq(endDateProbation)))
-//                .thenReturn(Collections.singletonList(ownershipCats));
-//
-//        mockMvc.perform(MockMvcRequestBuilders
-//                        .get("/ownershipCats?endDateProbation=" + endDateProbationForTest)
-//                        .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$[0].id").value(id))
-//                .andExpect(jsonPath("$[0].userCat").value(userCat))
-//                .andExpect(jsonPath("$[0].animalCat").value(animalCat))
-//                .andExpect(jsonPath("$[0].probationDays").value(probationDays))
-//                .andExpect(jsonPath("$[0].endDateProbation").value(endDateProbation.toString()))
-//                .andExpect(jsonPath("$[0].passageProbation").value(passageProbation));
-//    }
+    @Test
+    public void findOwnershipCatsByEndDateProbationPositiveTest() throws Exception {
+
+//        UserCat
+        final Long idUserCat = 1L;
+        final String fullName = "User";
+        final Long phone = 89994561122L;
+        final Long userId = 1L;
+
+//        AnimalCat
+        final long idAnimalCat = 1L;
+        final String name = "Cat";
+        final String breed = "outbred";
+        final int age = 3;
+
+//        OWNERSHIP_CAT
+        final long id = 1L;
+        final UserCat userCat = createNewUserCatForTests(idUserCat, fullName, phone, userId);
+        final AnimalCat animalCat = createNewCatForTests(idAnimalCat, name, breed, age);
+        final int probationDays = 30;
+        final LocalDate endDateProbation = LocalDate.of(2022, 12, 31);
+        final String passageProbation = "не окончен";
+        OwnershipCats ownershipCats = createNewOwnershipCatForTests(id, userCat, animalCat, probationDays, endDateProbation, passageProbation);
+
+        String endDateProbationForTest = "2022-12-31";
+
+        when(ownershipCatsRepository.findOwnershipCatsByEndDateProbation(ArgumentMatchers.eq(endDateProbation)))
+                .thenReturn(Collections.singletonList(ownershipCats));
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/ownershipCats?endDateProbation=" + endDateProbationForTest)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(id))
+                .andExpect(jsonPath("$[0].userCat").value(userCat))
+                .andExpect(jsonPath("$[0].animalCat").value(animalCat))
+                .andExpect(jsonPath("$[0].probationDays").value(probationDays))
+                .andExpect(jsonPath("$[0].endDateProbation").value(endDateProbation.toString()))
+                .andExpect(jsonPath("$[0].passageProbation").value(passageProbation));
+    }
 
     @Test
     public void findOwnershipCatsByEndDateProbationBadRequestTest() throws Exception {
@@ -584,46 +588,46 @@ public class OwnershipCatsControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-//    @Test
-//    public void findOwnershipCatsByPassageProbationPositiveTest() throws Exception {
-//
-//        //        UserCat
-//        final Long idUserCat = 1L;
-//        final String fullName = "User";
-//        final Long phone = 89994561122L;
-//        final Long userId = 1L;
-//
-//        //        AnimalCat
-//        final long idAnimalCat = 1L;
-//        final String name = "Cat";
-//        final String breed = "outbred";
-//        final int age = 3;
-//
-//        //        OWNERSHIP_CAT before with edit passage probation
-//        final long id = 1L;
-//        final UserCat userCat = createNewUserCatForTests(idUserCat, fullName, phone, userId);
-//        final AnimalCat animalCat = createNewCatForTests(idAnimalCat, name, breed, age);
-//        final int probationDays = 30;
-//        final LocalDate endDateProbation = LocalDate.now();
-//        final String passageProbation = "не окончен";
-//        OwnershipCats ownershipCats = createNewOwnershipCatForTests(id, userCat, animalCat, probationDays, endDateProbation, passageProbation);
-//
-//        String passageProbationForTest = "не окончен";
-//
-//        when(ownershipCatsRepository.findOwnershipCatsByPassageProbationIgnoreCase(ArgumentMatchers.eq(passageProbation)))
-//                .thenReturn(Collections.singletonList(ownershipCats));
-//
-//        mockMvc.perform(MockMvcRequestBuilders
-//                        .get("/ownershipCats?passageProbation=" + passageProbationForTest)
-//                        .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$[0].id").value(id))
-//                .andExpect(jsonPath("$[0].userCat").value(userCat))
-//                .andExpect(jsonPath("$[0].animalCat").value(animalCat))
-//                .andExpect(jsonPath("$[0].probationDays").value(probationDays))
-//                .andExpect(jsonPath("$[0].endDateProbation").value(endDateProbation.toString()))
-//                .andExpect(jsonPath("$[0].passageProbation").value(passageProbation));
-//    }
+    @Test
+    public void findOwnershipCatsByPassageProbationPositiveTest() throws Exception {
+
+        //        UserCat
+        final Long idUserCat = 1L;
+        final String fullName = "User";
+        final Long phone = 89994561122L;
+        final Long userId = 1L;
+
+        //        AnimalCat
+        final long idAnimalCat = 1L;
+        final String name = "Cat";
+        final String breed = "outbred";
+        final int age = 3;
+
+        //        OWNERSHIP_CAT before with edit passage probation
+        final long id = 1L;
+        final UserCat userCat = createNewUserCatForTests(idUserCat, fullName, phone, userId);
+        final AnimalCat animalCat = createNewCatForTests(idAnimalCat, name, breed, age);
+        final int probationDays = 30;
+        final LocalDate endDateProbation = LocalDate.now();
+        final String passageProbation = "не окончен";
+        OwnershipCats ownershipCats = createNewOwnershipCatForTests(id, userCat, animalCat, probationDays, endDateProbation, passageProbation);
+
+        String passageProbationForTest = "не окончен";
+
+        when(ownershipCatsRepository.findOwnershipCatsByPassageProbationIgnoreCase(ArgumentMatchers.eq(passageProbation)))
+                .thenReturn(Collections.singletonList(ownershipCats));
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/ownershipCats?passageProbation=" + passageProbationForTest)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(id))
+                .andExpect(jsonPath("$[0].userCat").value(userCat))
+                .andExpect(jsonPath("$[0].animalCat").value(animalCat))
+                .andExpect(jsonPath("$[0].probationDays").value(probationDays))
+                .andExpect(jsonPath("$[0].endDateProbation").value(endDateProbation.toString()))
+                .andExpect(jsonPath("$[0].passageProbation").value(passageProbation));
+    }
 
     @Test
     public void findOwnershipCatsByPassageProbationBadRequestTest() throws Exception {
@@ -635,42 +639,42 @@ public class OwnershipCatsControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-//    @Test
-//    public void findOwnershipCatsAllOwnershipCatsPositiveTest() throws Exception {
-//
-//        //        UserCat
-//        final Long idUserCat = 1L;
-//        final String fullName = "User";
-//        final Long phone = 89994561122L;
-//        final Long userId = 1L;
-//
-//        //        AnimalCat
-//        final long idAnimalCat = 1L;
-//        final String name = "Cat";
-//        final String breed = "outbred";
-//        final int age = 3;
-//
-//        //        OWNERSHIP_CAT before with edit passage probation
-//        final long id = 1L;
-//        final UserCat userCat = createNewUserCatForTests(idUserCat, fullName, phone, userId);
-//        final AnimalCat animalCat = createNewCatForTests(idAnimalCat, name, breed, age);
-//        final int probationDays = 30;
-//        final LocalDate endDateProbation = LocalDate.now();
-//        final String passageProbation = "не окончен";
-//        OwnershipCats ownershipCats = createNewOwnershipCatForTests(id, userCat, animalCat, probationDays, endDateProbation, passageProbation);
-//
-//        when(ownershipCatsRepository.findAll())
-//                .thenReturn(Collections.singletonList(ownershipCats));
-//
-//        mockMvc.perform(MockMvcRequestBuilders
-//                        .get("/ownershipCats")
-//                        .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$[0].id").value(id))
-//                .andExpect(jsonPath("$[0].userCat").value(userCat))
-//                .andExpect(jsonPath("$[0].animalCat").value(animalCat))
-//                .andExpect(jsonPath("$[0].probationDays").value(probationDays))
-//                .andExpect(jsonPath("$[0].endDateProbation").value(endDateProbation.toString()))
-//                .andExpect(jsonPath("$[0].passageProbation").value(passageProbation));
-//    }
+    @Test
+    public void findOwnershipCatsAllOwnershipCatsPositiveTest() throws Exception {
+
+        //        UserCat
+        final Long idUserCat = 1L;
+        final String fullName = "User";
+        final Long phone = 89994561122L;
+        final Long userId = 1L;
+
+        //        AnimalCat
+        final long idAnimalCat = 1L;
+        final String name = "Cat";
+        final String breed = "outbred";
+        final int age = 3;
+
+        //        OWNERSHIP_CAT before with edit passage probation
+        final long id = 1L;
+        final UserCat userCat = createNewUserCatForTests(idUserCat, fullName, phone, userId);
+        final AnimalCat animalCat = createNewCatForTests(idAnimalCat, name, breed, age);
+        final int probationDays = 30;
+        final LocalDate endDateProbation = LocalDate.now();
+        final String passageProbation = "не окончен";
+        OwnershipCats ownershipCats = createNewOwnershipCatForTests(id, userCat, animalCat, probationDays, endDateProbation, passageProbation);
+
+        when(ownershipCatsRepository.findAll())
+                .thenReturn(Collections.singletonList(ownershipCats));
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/ownershipCats")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(id))
+                .andExpect(jsonPath("$[0].userCat").value(userCat))
+                .andExpect(jsonPath("$[0].animalCat").value(animalCat))
+                .andExpect(jsonPath("$[0].probationDays").value(probationDays))
+                .andExpect(jsonPath("$[0].endDateProbation").value(endDateProbation.toString()))
+                .andExpect(jsonPath("$[0].passageProbation").value(passageProbation));
+    }
 }
