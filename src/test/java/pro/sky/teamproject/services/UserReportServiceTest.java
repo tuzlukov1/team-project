@@ -23,20 +23,20 @@ public class UserReportServiceTest {
     @InjectMocks
     private UserReportService userReportService;
 
-    @Test
-    public void getUsersMoreThanTwoDaysReportsTest() {
-        final Long id = 1L;
-        final LocalDate reportDate = LocalDate.now().minusDays(2);
-        final String reportText = "text";
-
-
-        UserReport userReport = new UserReport();
-        userReport.setId(id);
-        userReport.setReportDate(reportDate);
-        userReport.setReportText(reportText);
-        when(userReportService.findUsersMoreThanTwoDaysReports())
-                .thenReturn(List.of(userReport));
-
-
-    }
+//    @Test
+//    public void getUsersMoreThanTwoDaysReportsTest() {
+//        final Long id = 1L;
+//        final LocalDate reportDate = LocalDate.now().minusDays(2);
+//        final String reportText = "text";
+//
+//
+//        UserReport userReport = new UserReport();
+//        userReport.setId(id);
+//        userReport.setReportDate(reportDate);
+//        userReport.setReportText(reportText);
+//        when(userReportService.findUsersMoreThanTwoDaysReports())
+//                .thenReturn(List.of(userReport));
+//
+//
+//    }
 }
