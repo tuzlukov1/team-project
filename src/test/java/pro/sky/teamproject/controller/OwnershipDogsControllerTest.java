@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import pro.sky.teamproject.entity.AnimalDog;
 import pro.sky.teamproject.entity.OwnershipDogs;
 import pro.sky.teamproject.entity.UserDog;
+import pro.sky.teamproject.listener.TelegramBotUpdatesListener;
 import pro.sky.teamproject.repository.OwnershipDogsRepository;
 import pro.sky.teamproject.services.DogService;
 import pro.sky.teamproject.services.OwnershipDogsService;
@@ -41,6 +42,9 @@ public class OwnershipDogsControllerTest {
 
     @MockBean
     private DogService dogService;
+
+    @MockBean
+    TelegramBotUpdatesListener telegramBotUpdatesListener;
 
     @SpyBean
     private OwnershipDogsService ownershipDogsService;
@@ -84,48 +88,48 @@ public class OwnershipDogsControllerTest {
         return ownershipDogs;
     }
 
-//    @Test
-//    public void createOwnershipDogPositiveTest() throws Exception {
-//
-////        UserDog
-//        final Long idUserDog = 1L;
-//        final String fullName = "User";
-//        final Long phone = 89994561122L;
-//        final Long userId = 1L;
-//
-////        AnimalDog
-//        final long idAnimalDog = 1L;
-//        final String name = "Dog";
-//        final String breed = "outbred";
-//        final int age = 3;
-//
-////        OWNERSHIP_CAT
-//        final long id = 1L;
-//        final UserDog userDog = createNewUserDogForTests(idUserDog, fullName, phone, userId);
-//        final AnimalDog animalDog = createNewDogForTests(idAnimalDog, name, breed, age);
-//        final int probationDays = 30;
-//        final LocalDate endDateProbation = LocalDate.of(2022, 12, 31);
-//        final String passageProbation = "не окончен";
-//        OwnershipDogs ownershipDogs = createNewOwnershipDogForTests(id, userDog, animalDog, probationDays, endDateProbation, passageProbation);
-//
-//        when(userDogService.findUserDogById(any(Long.class)))
-//                .thenReturn(userDog);
-//        when(dogService.findAnimalById(any(Long.class)))
-//                .thenReturn(animalDog);
-//        when(ownershipDogsRepository.save(any(OwnershipDogs.class)))
-//                .thenReturn(ownershipDogs);
-//
-//        mockMvc.perform(MockMvcRequestBuilders
-//                        .post("/ownershipDogs?userDogId=" + idUserDog + "&animalDogId=" + idAnimalDog + "&probationDays=" + probationDays)
-//                        .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.id").value(id))
-//                .andExpect(jsonPath("$.userDog").value(userDog))
-//                .andExpect(jsonPath("$.animalDog").value(animalDog))
-//                .andExpect(jsonPath("$.probationDays").value(probationDays))
-//                .andExpect(jsonPath("$.endDateProbation").value(endDateProbation.toString()))
-//                .andExpect(jsonPath("$.passageProbation").value(passageProbation));
-//    }
+    @Test
+    public void createOwnershipDogPositiveTest() throws Exception {
+
+//        UserDog
+        final Long idUserDog = 1L;
+        final String fullName = "User";
+        final Long phone = 89994561122L;
+        final Long userId = 1L;
+
+//        AnimalDog
+        final long idAnimalDog = 1L;
+        final String name = "Dog";
+        final String breed = "outbred";
+        final int age = 3;
+
+//        OWNERSHIP_CAT
+        final long id = 1L;
+        final UserDog userDog = createNewUserDogForTests(idUserDog, fullName, phone, userId);
+        final AnimalDog animalDog = createNewDogForTests(idAnimalDog, name, breed, age);
+        final int probationDays = 30;
+        final LocalDate endDateProbation = LocalDate.of(2022, 12, 31);
+        final String passageProbation = "не окончен";
+        OwnershipDogs ownershipDogs = createNewOwnershipDogForTests(id, userDog, animalDog, probationDays, endDateProbation, passageProbation);
+
+        when(userDogService.findUserDogById(any(Long.class)))
+                .thenReturn(userDog);
+        when(dogService.findAnimalById(any(Long.class)))
+                .thenReturn(animalDog);
+        when(ownershipDogsRepository.save(any(OwnershipDogs.class)))
+                .thenReturn(ownershipDogs);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post("/ownershipDogs?userDogId=" + idUserDog + "&animalDogId=" + idAnimalDog + "&probationDays=" + probationDays)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(id))
+                .andExpect(jsonPath("$.userDog").value(userDog))
+                .andExpect(jsonPath("$.animalDog").value(animalDog))
+                .andExpect(jsonPath("$.probationDays").value(probationDays))
+                .andExpect(jsonPath("$.endDateProbation").value(endDateProbation.toString()))
+                .andExpect(jsonPath("$.passageProbation").value(passageProbation));
+    }
 
     @Test
     public void createOwnershipDogBadRequestTest() throws Exception {
@@ -162,44 +166,44 @@ public class OwnershipDogsControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-//    @Test
-//    public void getOwnershipDogInfoPositiveTest() throws Exception {
-//
-////        UserDog
-//        final Long idUserDog = 1L;
-//        final String fullName = "User";
-//        final Long phone = 89994561122L;
-//        final Long userId = 1L;
-//
-////        AnimalDog
-//        final long idAnimalDog = 1L;
-//        final String name = "Dog";
-//        final String breed = "outbred";
-//        final int age = 3;
-//
-////        OWNERSHIP_CAT
-//        final long id = 1L;
-//        final UserDog userDog = createNewUserDogForTests(idUserDog, fullName, phone, userId);
-//        final AnimalDog animalDog = createNewDogForTests(idAnimalDog, name, breed, age);
-//        final int probationDays = 30;
-//        final LocalDate endDateProbation = LocalDate.of(2022, 12, 31);
-//        final String passageProbation = "не окончен";
-//        OwnershipDogs ownershipDogs = createNewOwnershipDogForTests(id, userDog, animalDog, probationDays, endDateProbation, passageProbation);
-//
-//        when(ownershipDogsRepository.findById(any(Long.class)))
-//                .thenReturn(Optional.of(ownershipDogs));
-//
-//        mockMvc.perform(MockMvcRequestBuilders
-//                        .get("/ownershipDogs/{id}", id)
-//                        .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.id").value(id))
-//                .andExpect(jsonPath("$.userDog").value(userDog))
-//                .andExpect(jsonPath("$.animalDog").value(animalDog))
-//                .andExpect(jsonPath("$.probationDays").value(probationDays))
-//                .andExpect(jsonPath("$.endDateProbation").value(endDateProbation.toString()))
-//                .andExpect(jsonPath("$.passageProbation").value(passageProbation));
-//    }
+    @Test
+    public void getOwnershipDogInfoPositiveTest() throws Exception {
+
+//        UserDog
+        final Long idUserDog = 1L;
+        final String fullName = "User";
+        final Long phone = 89994561122L;
+        final Long userId = 1L;
+
+//        AnimalDog
+        final long idAnimalDog = 1L;
+        final String name = "Dog";
+        final String breed = "outbred";
+        final int age = 3;
+
+//        OWNERSHIP_CAT
+        final long id = 1L;
+        final UserDog userDog = createNewUserDogForTests(idUserDog, fullName, phone, userId);
+        final AnimalDog animalDog = createNewDogForTests(idAnimalDog, name, breed, age);
+        final int probationDays = 30;
+        final LocalDate endDateProbation = LocalDate.of(2022, 12, 31);
+        final String passageProbation = "не окончен";
+        OwnershipDogs ownershipDogs = createNewOwnershipDogForTests(id, userDog, animalDog, probationDays, endDateProbation, passageProbation);
+
+        when(ownershipDogsRepository.findById(any(Long.class)))
+                .thenReturn(Optional.of(ownershipDogs));
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/ownershipDogs/{id}", id)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(id))
+                .andExpect(jsonPath("$.userDog").value(userDog))
+                .andExpect(jsonPath("$.animalDog").value(animalDog))
+                .andExpect(jsonPath("$.probationDays").value(probationDays))
+                .andExpect(jsonPath("$.endDateProbation").value(endDateProbation.toString()))
+                .andExpect(jsonPath("$.passageProbation").value(passageProbation));
+    }
 
     @Test
     public void getOwnershipDogInfoBadRequestTest() throws Exception {
@@ -224,50 +228,50 @@ public class OwnershipDogsControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-//    @Test
-//    public void updateOwnershipDogPositiveTest() throws Exception {
-//
-////        UserDog
-//        final Long idUserDog = 1L;
-//        final String fullName = "User";
-//        final Long phone = 89994561122L;
-//        final Long userId = 1L;
-//
-////        AnimalDog
-//        final long idAnimalDog = 1L;
-//        final String name = "Dog";
-//        final String breed = "outbred";
-//        final int age = 3;
-//
-////        OWNERSHIP_CAT
-//        final long id = 1L;
-//        final UserDog userDog = createNewUserDogForTests(idUserDog, fullName, phone, userId);
-//        final AnimalDog animalDog = createNewDogForTests(idAnimalDog, name, breed, age);
-//        final int probationDays = 30;
-//        final LocalDate endDateProbation = LocalDate.of(2022, 12, 31);
-//        final String passageProbation = "не окончен";
-//        OwnershipDogs ownershipDogs = createNewOwnershipDogForTests(id, userDog, animalDog, probationDays, endDateProbation, passageProbation);
-//
-//        when(userDogService.findUserDogById(any(Long.class)))
-//                .thenReturn(userDog);
-//        when(dogService.findAnimalById(any(Long.class)))
-//                .thenReturn(animalDog);
-//        when(ownershipDogsRepository.findById(any(Long.class)))
-//                .thenReturn(Optional.of(ownershipDogs));
-//        when(ownershipDogsRepository.save(any(OwnershipDogs.class)))
-//                .thenReturn(ownershipDogs);
-//
-//        mockMvc.perform(MockMvcRequestBuilders
-//                        .put("/ownershipDogs?id=" + id + "&userDogId=" + idUserDog + "&animalDogId=" + idAnimalDog)
-//                        .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.id").value(id))
-//                .andExpect(jsonPath("$.userDog").value(userDog))
-//                .andExpect(jsonPath("$.animalDog").value(animalDog))
-//                .andExpect(jsonPath("$.probationDays").value(probationDays))
-//                .andExpect(jsonPath("$.endDateProbation").value(endDateProbation.toString()))
-//                .andExpect(jsonPath("$.passageProbation").value(passageProbation));
-//    }
+    @Test
+    public void updateOwnershipDogPositiveTest() throws Exception {
+
+//        UserDog
+        final Long idUserDog = 1L;
+        final String fullName = "User";
+        final Long phone = 89994561122L;
+        final Long userId = 1L;
+
+//        AnimalDog
+        final long idAnimalDog = 1L;
+        final String name = "Dog";
+        final String breed = "outbred";
+        final int age = 3;
+
+//        OWNERSHIP_CAT
+        final long id = 1L;
+        final UserDog userDog = createNewUserDogForTests(idUserDog, fullName, phone, userId);
+        final AnimalDog animalDog = createNewDogForTests(idAnimalDog, name, breed, age);
+        final int probationDays = 30;
+        final LocalDate endDateProbation = LocalDate.of(2022, 12, 31);
+        final String passageProbation = "не окончен";
+        OwnershipDogs ownershipDogs = createNewOwnershipDogForTests(id, userDog, animalDog, probationDays, endDateProbation, passageProbation);
+
+        when(userDogService.findUserDogById(any(Long.class)))
+                .thenReturn(userDog);
+        when(dogService.findAnimalById(any(Long.class)))
+                .thenReturn(animalDog);
+        when(ownershipDogsRepository.findById(any(Long.class)))
+                .thenReturn(Optional.of(ownershipDogs));
+        when(ownershipDogsRepository.save(any(OwnershipDogs.class)))
+                .thenReturn(ownershipDogs);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put("/ownershipDogs?id=" + id + "&userDogId=" + idUserDog + "&animalDogId=" + idAnimalDog)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(id))
+                .andExpect(jsonPath("$.userDog").value(userDog))
+                .andExpect(jsonPath("$.animalDog").value(animalDog))
+                .andExpect(jsonPath("$.probationDays").value(probationDays))
+                .andExpect(jsonPath("$.endDateProbation").value(endDateProbation.toString()))
+                .andExpect(jsonPath("$.passageProbation").value(passageProbation));
+    }
 
     @Test
     public void updateOwnershipDogBadRequestTest() throws Exception {
@@ -306,52 +310,52 @@ public class OwnershipDogsControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-//    @Test
-//    public void updateProbationDaysOwnershipDogPositiveTest() throws Exception {
-//
-////        UserDog
-//        final Long idUserDog = 1L;
-//        final String fullName = "User";
-//        final Long phone = 89994561122L;
-//        final Long userId = 1L;
-//
-////        AnimalDog
-//        final long idAnimalDog = 1L;
-//        final String name = "Dog";
-//        final String breed = "outbred";
-//        final int age = 3;
-//
-////        OWNERSHIP_CAT before with edit probation days
-//        final long id = 1L;
-//        final UserDog userDog = createNewUserDogForTests(idUserDog, fullName, phone, userId);
-//        final AnimalDog animalDog = createNewDogForTests(idAnimalDog, name, breed, age);
-//        final int probationDays = 30;
-//        final LocalDate endDateProbation = LocalDate.now().plusDays(probationDays);
-//        final String passageProbation = "не окончен";
-//        OwnershipDogs ownershipDogs = createNewOwnershipDogForTests(id, userDog, animalDog, probationDays, endDateProbation, passageProbation);
-//
-////        OWNERSHIP_CAT after with edit probation days
-//        OwnershipDogs ownershipDogsEdit = ownershipDogs;
-//        final int probationDaysEdit = 14;
-//        final LocalDate endDateProbationEdit = LocalDate.now().plusDays(probationDaysEdit);
-//        ownershipDogsEdit.setProbationDays(probationDaysEdit);
-//
-//        when(ownershipDogsRepository.findById(any(Long.class)))
-//                .thenReturn(Optional.of(ownershipDogs));
-//        when(ownershipDogsRepository.save(any(OwnershipDogs.class)))
-//                .thenReturn(ownershipDogsEdit);
-//
-//        mockMvc.perform(MockMvcRequestBuilders
-//                        .put("/ownershipDogs/probation-days?id=" + id + "&probationDays=" + probationDaysEdit)
-//                        .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.id").value(id))
-//                .andExpect(jsonPath("$.userDog").value(userDog))
-//                .andExpect(jsonPath("$.animalDog").value(animalDog))
-//                .andExpect(jsonPath("$.probationDays").value(probationDaysEdit))
-//                .andExpect(jsonPath("$.endDateProbation").value(endDateProbationEdit.toString()))
-//                .andExpect(jsonPath("$.passageProbation").value(passageProbation));
-//    }
+    @Test
+    public void updateProbationDaysOwnershipDogPositiveTest() throws Exception {
+
+//        UserDog
+        final Long idUserDog = 1L;
+        final String fullName = "User";
+        final Long phone = 89994561122L;
+        final Long userId = 1L;
+
+//        AnimalDog
+        final long idAnimalDog = 1L;
+        final String name = "Dog";
+        final String breed = "outbred";
+        final int age = 3;
+
+//        OWNERSHIP_CAT before with edit probation days
+        final long id = 1L;
+        final UserDog userDog = createNewUserDogForTests(idUserDog, fullName, phone, userId);
+        final AnimalDog animalDog = createNewDogForTests(idAnimalDog, name, breed, age);
+        final int probationDays = 30;
+        final LocalDate endDateProbation = LocalDate.now().plusDays(probationDays);
+        final String passageProbation = "не окончен";
+        OwnershipDogs ownershipDogs = createNewOwnershipDogForTests(id, userDog, animalDog, probationDays, endDateProbation, passageProbation);
+
+//        OWNERSHIP_CAT after with edit probation days
+        OwnershipDogs ownershipDogsEdit = ownershipDogs;
+        final int probationDaysEdit = 14;
+        final LocalDate endDateProbationEdit = LocalDate.now().plusDays(probationDaysEdit);
+        ownershipDogsEdit.setProbationDays(probationDaysEdit);
+
+        when(ownershipDogsRepository.findById(any(Long.class)))
+                .thenReturn(Optional.of(ownershipDogs));
+        when(ownershipDogsRepository.save(any(OwnershipDogs.class)))
+                .thenReturn(ownershipDogsEdit);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put("/ownershipDogs/probation-days?id=" + id + "&probationDays=" + probationDaysEdit)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(id))
+                .andExpect(jsonPath("$.userDog").value(userDog))
+                .andExpect(jsonPath("$.animalDog").value(animalDog))
+                .andExpect(jsonPath("$.probationDays").value(probationDaysEdit))
+                .andExpect(jsonPath("$.endDateProbation").value(endDateProbationEdit.toString()))
+                .andExpect(jsonPath("$.passageProbation").value(passageProbation));
+    }
 
     @Test
     public void updateProbationDaysOwnershipDogNegativeTest() throws Exception {
@@ -435,51 +439,51 @@ public class OwnershipDogsControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-//    @Test
-//    public void updatePassageProbationOwnershipDogPositiveTest() throws Exception {
-//
-////        UserDog
-//        final Long idUserDog = 1L;
-//        final String fullName = "User";
-//        final Long phone = 89994561122L;
-//        final Long userId = 1L;
-//
-////        AnimalDog
-//        final long idAnimalDog = 1L;
-//        final String name = "Dog";
-//        final String breed = "outbred";
-//        final int age = 3;
-//
-////        OWNERSHIP_CAT before with edit passage probation
-//        final long id = 1L;
-//        final UserDog userDog = createNewUserDogForTests(idUserDog, fullName, phone, userId);
-//        final AnimalDog animalDog = createNewDogForTests(idAnimalDog, name, breed, age);
-//        final int probationDays = 30;
-//        final LocalDate endDateProbation = LocalDate.now();
-//        final String passageProbation = "не окончен";
-//        OwnershipDogs ownershipDogs = createNewOwnershipDogForTests(id, userDog, animalDog, probationDays, endDateProbation, passageProbation);
-//
-////        OWNERSHIP_CAT after with edit passage probation
-//        OwnershipDogs ownershipDogsEdit = ownershipDogs;
-//        String passageProbationEdit = "пройден";
-//        ownershipDogs.setPassageProbation(passageProbationEdit);
-//
-//        when(ownershipDogsRepository.findById(any(Long.class)))
-//                .thenReturn(Optional.of(ownershipDogs));
-//        when(ownershipDogsRepository.save(any(OwnershipDogs.class)))
-//                .thenReturn(ownershipDogsEdit);
-//
-//        mockMvc.perform(MockMvcRequestBuilders
-//                        .put("/ownershipDogs/passage-probation?id=" + id + "&passageProbation=" + passageProbationEdit)
-//                        .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.id").value(id))
-//                .andExpect(jsonPath("$.userDog").value(userDog))
-//                .andExpect(jsonPath("$.animalDog").value(animalDog))
-//                .andExpect(jsonPath("$.probationDays").value(probationDays))
-//                .andExpect(jsonPath("$.endDateProbation").value(endDateProbation.toString()))
-//                .andExpect(jsonPath("$.passageProbation").value(passageProbationEdit));
-//    }
+    @Test
+    public void updatePassageProbationOwnershipDogPositiveTest() throws Exception {
+
+//        UserDog
+        final Long idUserDog = 1L;
+        final String fullName = "User";
+        final Long phone = 89994561122L;
+        final Long userId = 1L;
+
+//        AnimalDog
+        final long idAnimalDog = 1L;
+        final String name = "Dog";
+        final String breed = "outbred";
+        final int age = 3;
+
+//        OWNERSHIP_CAT before with edit passage probation
+        final long id = 1L;
+        final UserDog userDog = createNewUserDogForTests(idUserDog, fullName, phone, userId);
+        final AnimalDog animalDog = createNewDogForTests(idAnimalDog, name, breed, age);
+        final int probationDays = 30;
+        final LocalDate endDateProbation = LocalDate.now();
+        final String passageProbation = "не окончен";
+        OwnershipDogs ownershipDogs = createNewOwnershipDogForTests(id, userDog, animalDog, probationDays, endDateProbation, passageProbation);
+
+//        OWNERSHIP_CAT after with edit passage probation
+        OwnershipDogs ownershipDogsEdit = ownershipDogs;
+        String passageProbationEdit = "пройден";
+        ownershipDogs.setPassageProbation(passageProbationEdit);
+
+        when(ownershipDogsRepository.findById(any(Long.class)))
+                .thenReturn(Optional.of(ownershipDogs));
+        when(ownershipDogsRepository.save(any(OwnershipDogs.class)))
+                .thenReturn(ownershipDogsEdit);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put("/ownershipDogs/passage-probation?id=" + id + "&passageProbation=" + passageProbationEdit)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(id))
+                .andExpect(jsonPath("$.userDog").value(userDog))
+                .andExpect(jsonPath("$.animalDog").value(animalDog))
+                .andExpect(jsonPath("$.probationDays").value(probationDays))
+                .andExpect(jsonPath("$.endDateProbation").value(endDateProbation.toString()))
+                .andExpect(jsonPath("$.passageProbation").value(passageProbationEdit));
+    }
 
     @Test
     public void updatePassageProbationOwnershipDogBadRequestTest() throws Exception {
@@ -533,46 +537,46 @@ public class OwnershipDogsControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-//    @Test
-//    public void findOwnershipDogsByEndDateProbationPositiveTest() throws Exception {
-//
-////        UserDog
-//        final Long idUserDog = 1L;
-//        final String fullName = "User";
-//        final Long phone = 89994561122L;
-//        final Long userId = 1L;
-//
-////        AnimalDog
-//        final long idAnimalDog = 1L;
-//        final String name = "Dog";
-//        final String breed = "outbred";
-//        final int age = 3;
-//
-////        OWNERSHIP_CAT
-//        final long id = 1L;
-//        final UserDog userDog = createNewUserDogForTests(idUserDog, fullName, phone, userId);
-//        final AnimalDog animalDog = createNewDogForTests(idAnimalDog, name, breed, age);
-//        final int probationDays = 30;
-//        final LocalDate endDateProbation = LocalDate.of(2022, 12, 31);
-//        final String passageProbation = "не окончен";
-//        OwnershipDogs ownershipDogs = createNewOwnershipDogForTests(id, userDog, animalDog, probationDays, endDateProbation, passageProbation);
-//
-//        String endDateProbationForTest = "2022-12-31";
-//
-//        when(ownershipDogsRepository.findOwnershipDogsByEndDateProbation(ArgumentMatchers.eq(endDateProbation)))
-//                .thenReturn(Collections.singletonList(ownershipDogs));
-//
-//        mockMvc.perform(MockMvcRequestBuilders
-//                        .get("/ownershipDogs?endDateProbation=" + endDateProbationForTest)
-//                        .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$[0].id").value(id))
-//                .andExpect(jsonPath("$[0].userDog").value(userDog))
-//                .andExpect(jsonPath("$[0].animalDog").value(animalDog))
-//                .andExpect(jsonPath("$[0].probationDays").value(probationDays))
-//                .andExpect(jsonPath("$[0].endDateProbation").value(endDateProbation.toString()))
-//                .andExpect(jsonPath("$[0].passageProbation").value(passageProbation));
-//    }
+    @Test
+    public void findOwnershipDogsByEndDateProbationPositiveTest() throws Exception {
+
+//        UserDog
+        final Long idUserDog = 1L;
+        final String fullName = "User";
+        final Long phone = 89994561122L;
+        final Long userId = 1L;
+
+//        AnimalDog
+        final long idAnimalDog = 1L;
+        final String name = "Dog";
+        final String breed = "outbred";
+        final int age = 3;
+
+//        OWNERSHIP_CAT
+        final long id = 1L;
+        final UserDog userDog = createNewUserDogForTests(idUserDog, fullName, phone, userId);
+        final AnimalDog animalDog = createNewDogForTests(idAnimalDog, name, breed, age);
+        final int probationDays = 30;
+        final LocalDate endDateProbation = LocalDate.of(2022, 12, 31);
+        final String passageProbation = "не окончен";
+        OwnershipDogs ownershipDogs = createNewOwnershipDogForTests(id, userDog, animalDog, probationDays, endDateProbation, passageProbation);
+
+        String endDateProbationForTest = "2022-12-31";
+
+        when(ownershipDogsRepository.findOwnershipDogsByEndDateProbation(ArgumentMatchers.eq(endDateProbation)))
+                .thenReturn(Collections.singletonList(ownershipDogs));
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/ownershipDogs?endDateProbation=" + endDateProbationForTest)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(id))
+                .andExpect(jsonPath("$[0].userDog").value(userDog))
+                .andExpect(jsonPath("$[0].animalDog").value(animalDog))
+                .andExpect(jsonPath("$[0].probationDays").value(probationDays))
+                .andExpect(jsonPath("$[0].endDateProbation").value(endDateProbation.toString()))
+                .andExpect(jsonPath("$[0].passageProbation").value(passageProbation));
+    }
 
     @Test
     public void findOwnershipDogsByEndDateProbationBadRequestTest() throws Exception {
@@ -584,46 +588,46 @@ public class OwnershipDogsControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-//    @Test
-//    public void findOwnershipDogsByPassageProbationPositiveTest() throws Exception {
-//
-//        //        UserDog
-//        final Long idUserDog = 1L;
-//        final String fullName = "User";
-//        final Long phone = 89994561122L;
-//        final Long userId = 1L;
-//
-//        //        AnimalDog
-//        final long idAnimalDog = 1L;
-//        final String name = "Dog";
-//        final String breed = "outbred";
-//        final int age = 3;
-//
-//        //        OWNERSHIP_CAT before with edit passage probation
-//        final long id = 1L;
-//        final UserDog userDog = createNewUserDogForTests(idUserDog, fullName, phone, userId);
-//        final AnimalDog animalDog = createNewDogForTests(idAnimalDog, name, breed, age);
-//        final int probationDays = 30;
-//        final LocalDate endDateProbation = LocalDate.now();
-//        final String passageProbation = "не окончен";
-//        OwnershipDogs ownershipDogs = createNewOwnershipDogForTests(id, userDog, animalDog, probationDays, endDateProbation, passageProbation);
-//
-//        String passageProbationForTest = "не окончен";
-//
-//        when(ownershipDogsRepository.findOwnershipDogsByPassageProbationIgnoreCase(ArgumentMatchers.eq(passageProbation)))
-//                .thenReturn(Collections.singletonList(ownershipDogs));
-//
-//        mockMvc.perform(MockMvcRequestBuilders
-//                        .get("/ownershipDogs?passageProbation=" + passageProbationForTest)
-//                        .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$[0].id").value(id))
-//                .andExpect(jsonPath("$[0].userDog").value(userDog))
-//                .andExpect(jsonPath("$[0].animalDog").value(animalDog))
-//                .andExpect(jsonPath("$[0].probationDays").value(probationDays))
-//                .andExpect(jsonPath("$[0].endDateProbation").value(endDateProbation.toString()))
-//                .andExpect(jsonPath("$[0].passageProbation").value(passageProbation));
-//    }
+    @Test
+    public void findOwnershipDogsByPassageProbationPositiveTest() throws Exception {
+
+        //        UserDog
+        final Long idUserDog = 1L;
+        final String fullName = "User";
+        final Long phone = 89994561122L;
+        final Long userId = 1L;
+
+        //        AnimalDog
+        final long idAnimalDog = 1L;
+        final String name = "Dog";
+        final String breed = "outbred";
+        final int age = 3;
+
+        //        OWNERSHIP_CAT before with edit passage probation
+        final long id = 1L;
+        final UserDog userDog = createNewUserDogForTests(idUserDog, fullName, phone, userId);
+        final AnimalDog animalDog = createNewDogForTests(idAnimalDog, name, breed, age);
+        final int probationDays = 30;
+        final LocalDate endDateProbation = LocalDate.now();
+        final String passageProbation = "не окончен";
+        OwnershipDogs ownershipDogs = createNewOwnershipDogForTests(id, userDog, animalDog, probationDays, endDateProbation, passageProbation);
+
+        String passageProbationForTest = "не окончен";
+
+        when(ownershipDogsRepository.findOwnershipDogsByPassageProbationIgnoreCase(ArgumentMatchers.eq(passageProbation)))
+                .thenReturn(Collections.singletonList(ownershipDogs));
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/ownershipDogs?passageProbation=" + passageProbationForTest)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(id))
+                .andExpect(jsonPath("$[0].userDog").value(userDog))
+                .andExpect(jsonPath("$[0].animalDog").value(animalDog))
+                .andExpect(jsonPath("$[0].probationDays").value(probationDays))
+                .andExpect(jsonPath("$[0].endDateProbation").value(endDateProbation.toString()))
+                .andExpect(jsonPath("$[0].passageProbation").value(passageProbation));
+    }
 
     @Test
     public void findOwnershipDogsByPassageProbationBadRequestTest() throws Exception {
@@ -634,44 +638,43 @@ public class OwnershipDogsControllerTest {
                         .get("/ownershipDogs?passageProbation=" + passageProbationForTest))
                 .andExpect(status().isBadRequest());
     }
-}
 
-//    @Test
-//    public void findOwnershipDogsAllOwnershipDogsPositiveTest() throws Exception {
-//
-//        //        UserDog
-//        final Long idUserDog = 1L;
-//        final String fullName = "User";
-//        final Long phone = 89994561122L;
-//        final Long userId = 1L;
-//
-//        //        AnimalDog
-//        final long idAnimalDog = 1L;
-//        final String name = "Dog";
-//        final String breed = "outbred";
-//        final int age = 3;
-//
-//        //        OWNERSHIP_CAT before with edit passage probation
-//        final long id = 1L;
-//        final UserDog userDog = createNewUserDogForTests(idUserDog, fullName, phone, userId);
-//        final AnimalDog animalDog = createNewDogForTests(idAnimalDog, name, breed, age);
-//        final int probationDays = 30;
-//        final LocalDate endDateProbation = LocalDate.now();
-//        final String passageProbation = "не окончен";
-//        OwnershipDogs ownershipDogs = createNewOwnershipDogForTests(id, userDog, animalDog, probationDays, endDateProbation, passageProbation);
-//
-//        when(ownershipDogsRepository.findAll())
-//                .thenReturn(Collections.singletonList(ownershipDogs));
-//
-//        mockMvc.perform(MockMvcRequestBuilders
-//                        .get("/ownershipDogs")
-//                        .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$[0].id").value(id))
-//                .andExpect(jsonPath("$[0].userDog").value(userDog))
-//                .andExpect(jsonPath("$[0].animalDog").value(animalDog))
-//                .andExpect(jsonPath("$[0].probationDays").value(probationDays))
-//                .andExpect(jsonPath("$[0].endDateProbation").value(endDateProbation.toString()))
-//                .andExpect(jsonPath("$[0].passageProbation").value(passageProbation));
-//    }
-//}
+    @Test
+    public void findOwnershipDogsAllOwnershipDogsPositiveTest() throws Exception {
+
+        //        UserDog
+        final Long idUserDog = 1L;
+        final String fullName = "User";
+        final Long phone = 89994561122L;
+        final Long userId = 1L;
+
+        //        AnimalDog
+        final long idAnimalDog = 1L;
+        final String name = "Dog";
+        final String breed = "outbred";
+        final int age = 3;
+
+        //        OWNERSHIP_CAT before with edit passage probation
+        final long id = 1L;
+        final UserDog userDog = createNewUserDogForTests(idUserDog, fullName, phone, userId);
+        final AnimalDog animalDog = createNewDogForTests(idAnimalDog, name, breed, age);
+        final int probationDays = 30;
+        final LocalDate endDateProbation = LocalDate.now();
+        final String passageProbation = "не окончен";
+        OwnershipDogs ownershipDogs = createNewOwnershipDogForTests(id, userDog, animalDog, probationDays, endDateProbation, passageProbation);
+
+        when(ownershipDogsRepository.findAll())
+                .thenReturn(Collections.singletonList(ownershipDogs));
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/ownershipDogs")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(id))
+                .andExpect(jsonPath("$[0].userDog").value(userDog))
+                .andExpect(jsonPath("$[0].animalDog").value(animalDog))
+                .andExpect(jsonPath("$[0].probationDays").value(probationDays))
+                .andExpect(jsonPath("$[0].endDateProbation").value(endDateProbation.toString()))
+                .andExpect(jsonPath("$[0].passageProbation").value(passageProbation));
+    }
+}
