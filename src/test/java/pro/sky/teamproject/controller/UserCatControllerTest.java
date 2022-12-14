@@ -210,7 +210,7 @@ class UserCatControllerTest {
     }
 
     @Test
-    public void findUserFindAllUsersPositiveTest() throws Exception {
+    public void findUserCatByUserIdPositiveTest() throws Exception {
         final Long id = 1L;
         final String fullName = "User";
         final Long phone = 89994561122L;
@@ -220,11 +220,11 @@ class UserCatControllerTest {
         user.setFullName(fullName);
         user.setPhone(phone);
 
-        when(usersCatRepository.findAll())
-                .thenReturn(Collections.singletonList(user));
+        when(usersCatRepository.findUserCatByUserId(any(Long.class)))
+                .thenReturn(user);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/userCat")
+                        .get("/userCat?userId=" + id)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(id))
@@ -232,15 +232,4 @@ class UserCatControllerTest {
                 .andExpect(jsonPath("$.phone").value(phone));
     }
 
-    @Test
-    public void findUserFindAllUsersNegativeTest() throws Exception {
-        when(usersCatRepository.findAll())
-                .thenReturn(null);
-
-        mockMvc.perform(MockMvcRequestBuilders
-                        .get("/userCat")
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .equals(Collections.EMPTY_LIST);
-    }
 }

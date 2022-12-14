@@ -258,7 +258,7 @@ class CatControllerTest {
     }
 
     @Test
-    public void findAnimalFindAllAnimalPositiveTest() throws Exception {
+    public void findAllAnimalPositiveTest() throws Exception {
         final long id = 1L;
         final String name = "Cat";
         final String breed = "outbred";

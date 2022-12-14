@@ -14,6 +14,8 @@ import pro.sky.teamproject.entity.User;
 import pro.sky.teamproject.repository.UsersRepository;
 import pro.sky.teamproject.services.UserService;
 
+import java.util.Optional;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -68,5 +70,38 @@ public class UserControllerTest {
                         .get("/userDog/" + id +"/chatId")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void postWarningMessageByIdTest() throws Exception {
+        final Long id = 1L;
+        final String userName = "User";
+        final Long chatId = 123456L;
+        final boolean haveWarning = false;
+        final boolean haveWarningChanged = true;
+
+        User user = new User();
+        user.setId(id);
+        user.setChatId(chatId);
+        user.setUserName(userName);
+        user.setHaveWarning(haveWarning);
+
+
+
+        when(usersRepository.findUserByChatId(any(Long.class)))
+                .thenReturn(user);
+        when(userService.setWarningStatus(any(Long.class)))
+                .thenReturn(Optional.ofNullable(user));
+
+
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/user/" + id +"/chatId")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(id))
+                .andExpect(jsonPath("$.userName").value(userName))
+                .andExpect(jsonPath("$.chatId").value(chatId))
+                .andExpect(jsonPath("$.haveWarning").value(haveWarningChanged));
     }
 }
