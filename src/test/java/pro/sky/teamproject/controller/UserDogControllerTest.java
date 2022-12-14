@@ -222,6 +222,7 @@ class UserDogControllerTest {
         user.setFullName(fullName);
         user.setPhone(phone);
 
+
         when(usersDogRepository.findAll())
                 .thenReturn(Collections.singletonList(user));
 

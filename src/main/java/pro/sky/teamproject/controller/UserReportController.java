@@ -43,7 +43,7 @@ public class UserReportController {
             tags = "User_Reports"
     )
     @GetMapping
-    public Optional<List<UserReport>> findUsersMoreThanTwoDaysReports(){
+    public List<UserReport> findUsersMoreThanTwoDaysReports(){
         return userReportService.findUsersMoreThanTwoDaysReports();
     }
 

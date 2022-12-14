@@ -26,7 +26,7 @@ public class UserReportService {
         return usersReportRepository.save(userReport);
     }
 
-    public Optional<List<UserReport>> findUsersMoreThanTwoDaysReports() {
+    public List<UserReport> findUsersMoreThanTwoDaysReports() {
         List<UserReport> userReportList = usersReportRepository.findAll();
         List<UserReport> userLists = new ArrayList<>();
         userReportList.forEach(
@@ -36,7 +36,7 @@ public class UserReportService {
                     }
                 }
         );
-        return Optional.of(userLists);
+        return userLists;
     }
 
 }
