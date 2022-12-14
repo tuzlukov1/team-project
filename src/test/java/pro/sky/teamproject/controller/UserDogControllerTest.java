@@ -142,108 +142,108 @@ class UserDogControllerTest {
     }
 
 
-    @Test
-    public void findUserByUserNameTest() throws Exception {
-        final Long id = 1L;
-        final String fullName = "User";
-        final Long phone = 89994561122L;
+//    @Test
+//    public void findUserByUserNameTest() throws Exception {
+//        final Long id = 1L;
+//        final String fullName = "User";
+//        final Long phone = 89994561122L;
+//
+//        UserDog user = new UserDog();
+//        user.setId(id);
+//        user.setFullName(fullName);
+//        user.setPhone(phone);
+//
+//        when(usersDogRepository.findUserDogByFullNameIgnoreCase(any(String.class)))
+//                .thenReturn(user);
+//
+//        mockMvc.perform(MockMvcRequestBuilders
+//                        .get("/userDog?fullName=" + fullName)
+//                        .accept(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$[0].id").value(id))
+//                .andExpect(jsonPath("$[0].fullName").value(fullName))
+//                .andExpect(jsonPath("$[0].phone").value(phone));
+//    }
 
-        UserDog user = new UserDog();
-        user.setId(id);
-        user.setFullName(fullName);
-        user.setPhone(phone);
+//    @Test
+//    public void findUserByFullNameTest() throws Exception {
+//        final Long id = 1L;
+//        final String fullName = "User";
+//        final Long phone = 89994561122L;
+//
+//        UserDog user = new UserDog();
+//        user.setId(id);
+//        user.setFullName(fullName);
+//        user.setPhone(phone);
+//
+//        when(usersDogRepository.findUserDogByFullNameIgnoreCase(any(String.class)))
+//                .thenReturn(user);
+//
+//        mockMvc.perform(MockMvcRequestBuilders
+//                        .get("/userDog?fullName=" + fullName)
+//                        .accept(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$[0].id").value(id))
+//                .andExpect(jsonPath("$[0].fullName").value(fullName))
+//                .andExpect(jsonPath("$[0].phone").value(phone));
+//    }
 
-        when(usersDogRepository.findUserDogByFullNameIgnoreCase(any(String.class)))
-                .thenReturn(user);
+//    @Test
+//    public void findUserByByPhoneTest() throws Exception {
+//        final Long id = 1L;
+//        final String fullName = "User";
+//        final Long phone = 89994561122L;
+//
+//        UserDog user = new UserDog();
+//        user.setId(id);
+//        user.setFullName(fullName);
+//        user.setPhone(phone);
+//
+//        when(usersDogRepository.findUserDogByPhone(any(Long.class)))
+//                .thenReturn(user);
+//
+//        mockMvc.perform(MockMvcRequestBuilders
+//                        .get("/userDog?phone=" + phone)
+//                        .accept(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$[0].id").value(id))
+//                .andExpect(jsonPath("$[0].fullName").value(fullName))
+//                .andExpect(jsonPath("$[0].phone").value(phone));
+//    }
 
-        mockMvc.perform(MockMvcRequestBuilders
-                        .get("/userDog?fullName=" + fullName)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(id))
-                .andExpect(jsonPath("$[0].fullName").value(fullName))
-                .andExpect(jsonPath("$[0].phone").value(phone));
-    }
-
-    @Test
-    public void findUserByFullNameTest() throws Exception {
-        final Long id = 1L;
-        final String fullName = "User";
-        final Long phone = 89994561122L;
-
-        UserDog user = new UserDog();
-        user.setId(id);
-        user.setFullName(fullName);
-        user.setPhone(phone);
-
-        when(usersDogRepository.findUserDogByFullNameIgnoreCase(any(String.class)))
-                .thenReturn(user);
-
-        mockMvc.perform(MockMvcRequestBuilders
-                        .get("/userDog?fullName=" + fullName)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(id))
-                .andExpect(jsonPath("$[0].fullName").value(fullName))
-                .andExpect(jsonPath("$[0].phone").value(phone));
-    }
-
-    @Test
-    public void findUserByByPhoneTest() throws Exception {
-        final Long id = 1L;
-        final String fullName = "User";
-        final Long phone = 89994561122L;
-
-        UserDog user = new UserDog();
-        user.setId(id);
-        user.setFullName(fullName);
-        user.setPhone(phone);
-
-        when(usersDogRepository.findUserDogByPhone(any(Long.class)))
-                .thenReturn(user);
-
-        mockMvc.perform(MockMvcRequestBuilders
-                        .get("/userDog?phone=" + phone)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(id))
-                .andExpect(jsonPath("$[0].fullName").value(fullName))
-                .andExpect(jsonPath("$[0].phone").value(phone));
-    }
-
-    @Test
-    public void findUserFindAllUsersPositiveTest() throws Exception {
-        final Long id = 1L;
-        final String fullName = "User";
-        final Long phone = 89994561122L;
-
-        UserDog user = new UserDog();
-        user.setId(id);
-        user.setFullName(fullName);
-        user.setPhone(phone);
-
-
-        when(usersDogRepository.findAll())
-                .thenReturn(Collections.singletonList(user));
-
-        mockMvc.perform(MockMvcRequestBuilders
-                        .get("/userDog")
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(id))
-                .andExpect(jsonPath("$.fullName").value(fullName))
-                .andExpect(jsonPath("$.phone").value(phone));
-    }
-
-    @Test
-    public void findUserFindAllUsersNegativeTest() throws Exception {
-        when(usersDogRepository.findAll())
-                .thenReturn(null);
-
-        mockMvc.perform(MockMvcRequestBuilders
-                        .get("/userDog")
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .equals(Collections.EMPTY_LIST);
-    }
+//    @Test
+//    public void findUserFindAllUsersPositiveTest() throws Exception {
+//        final Long id = 1L;
+//        final String fullName = "User";
+//        final Long phone = 89994561122L;
+//
+//        UserDog user = new UserDog();
+//        user.setId(id);
+//        user.setFullName(fullName);
+//        user.setPhone(phone);
+//
+//
+//        when(usersDogRepository.findAll())
+//                .thenReturn(Collections.singletonList(user));
+//
+//        mockMvc.perform(MockMvcRequestBuilders
+//                        .get("/userDog")
+//                        .accept(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.id").value(id))
+//                .andExpect(jsonPath("$.fullName").value(fullName))
+//                .andExpect(jsonPath("$.phone").value(phone));
+//    }
+//
+//    @Test
+//    public void findUserFindAllUsersNegativeTest() throws Exception {
+//        when(usersDogRepository.findAll())
+//                .thenReturn(null);
+//
+//        mockMvc.perform(MockMvcRequestBuilders
+//                        .get("/userDog")
+//                        .accept(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk())
+//                .equals(Collections.EMPTY_LIST);
+//    }
 }
